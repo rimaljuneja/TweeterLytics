@@ -1,7 +1,21 @@
 @()
 
-@main("Welcome to Play") {
-  <h1>Welcome to TweeterLytics!</h1>
-  <input type="text" placeholder="enter search term"/> 
- <button>Go</button>
+@main("TweeterLytics") {
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<div class="container">
+  <div class="jumbotron">
+  	<h1 class="center">Welcome to TweeterLytics!</h1>
+  </div>
+</div>
+<div class="center">
+  <input class="input-lg" type="text" placeholder="enter search term(s)"/> 
+<button type="button" class="btn btn-info"><span class="glyphicon glyphicon-search"></span> Go</button>
+</div>
 }
