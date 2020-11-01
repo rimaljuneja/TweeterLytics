@@ -11,6 +11,10 @@ libraryDependencies += guice
 
 libraryDependencies += "org.twitter4j" % "twitter4j-core" % "4.0.7"
 
+libraryDependencies ++= Seq(
+  caffeine
+)
+
 // Compile the project before generating Eclipse files, so
 // that generated .scala or .class files for views and routes are present
 
