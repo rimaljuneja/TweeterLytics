@@ -7,3 +7,10 @@ input {
 	text-align: center;
 }
 
+caption {
+	font-weight: 600;
+	color: black !important;
+}
+body {
+	overflow-x: hidden;
+}
