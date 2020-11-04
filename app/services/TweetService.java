@@ -106,10 +106,10 @@ public class TweetService {
 		int countOfNegativeTweets = Collections.frequency(listOfTweetSentiments,"-1");
 		
 		if((float)countOfPositiveTweets/tweets.size()>=0.7F)
-			return "positive"; // Return positive if positive tweets are >= 70%
+			return "happy"; // Return happy if positive tweets are >= 70%
 		
 		else if((float)countOfNegativeTweets/tweets.size()>=0.7F)
-			return "negative"; // Return negative if positive tweets are >= 70%
+			return "sad"; // Return sad if negative tweets are >= 70%
 		
 		else
 			return "neutral"; //Else return neutral
