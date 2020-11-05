@@ -5,7 +5,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import models.Tweet;
 import twitter4j.Query;
@@ -24,51 +27,54 @@ public class TweetService {
 	 * @param keyword
 	 * @return
 	 */
-	public static List<Tweet> searchForKeywordAndGetTweets(String keyword){
-
-		List<Tweet> searchResults = new ArrayList<>();
-
-		Twitter twitter = TwitterFactory.getSingleton();
-
-		Query query = new Query("\\\"" +keyword+ "\\\"" + " +exclude:retweets");
+	public static CompletionStage<List<Tweet>> searchForKeywordAndGetTweets(String keyword){
 		
-		// To get Recent Tweets first
-		query.resultType(Query.RECENT);
+		return supplyAsync (()->{
 
-		//count should be changed to 50 for final demo  (50*5=250)
-		query.setCount(50);
+			List<Tweet> searchResults = new ArrayList<>();
 
-		int count = 0;
+			Twitter twitter = TwitterFactory.getSingleton();
 
-		QueryResult result = null;
+			Query query = new Query("\\\"" +keyword+ "\\\"" + " +exclude:retweets");
 
-		do {
+			// To get Recent Tweets first
+			query.resultType(Query.RECENT);
 
-			try {
+			//(50*5=250) 
+			query.setCount(50);
 
-				result = twitter.search(query);
+			int count = 0;
 
-				searchResults.addAll(result.getTweets().
-						parallelStream().
-						map(status->
+			QueryResult result = null;
+
+			do {
+
+				try {
+
+					result = twitter.search(query);
+
+					searchResults.addAll(result.getTweets().
+							parallelStream().
+							map(status->
 							new Tweet(	status.getText(),
-										status.getUser().getScreenName(), 
-										status.getUser().getId())).
-						collect(Collectors.toList()));
+									status.getUser().getScreenName(), 
+									status.getUser().getId())).
+							collect(Collectors.toList()));
 
-				count += 1;
+					count += 1;
 
-				if(count==5)
-					break;
+					if(count==5)
+						break;
 
-			} catch (TwitterException e) {
-				e.printStackTrace();
+				} catch (TwitterException e) {
+					e.printStackTrace();
+				}
+
 			}
+			while( result!=null && (query = result.nextQuery()) !=null);
 
-		}
-		while( result!=null && (query = result.nextQuery()) !=null);
-
-		return searchResults;
+			return searchResults;
+		});
 	}
 	
 	/**
@@ -105,10 +111,10 @@ public class TweetService {
 		//Count of negative tweets
 		int countOfNegativeTweets = Collections.frequency(listOfTweetSentiments,"-1");
 		
-		if((float)countOfPositiveTweets/tweets.size()>=0.7F)
+		if((float)countOfPositiveTweets/tweets.size()>=0.7f)
 			return "happy"; // Return happy if positive tweets are >= 70%
 		
-		else if((float)countOfNegativeTweets/tweets.size()>=0.7F)
+		else if((float)countOfNegativeTweets/tweets.size()>=0.7f)
 			return "sad"; // Return sad if negative tweets are >= 70%
 		
 		else

@@ -7,16 +7,15 @@ import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import akka.Done;
 import models.Tweet;
 import models.TweetSearchResult;
-
-import play.cache.SyncCacheApi;
+import play.cache.AsyncCacheApi;
 import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.*;
 import services.TweetService;
 import utils.Util;
-import java.util.Optional;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
@@ -24,7 +23,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,19 +34,15 @@ import java.util.Map;
 public class HomeController extends Controller {
 
 	private HttpExecutionContext ec;
-
-	private List<String> cacheKeys;
 	
 	private Map<String,Integer> wordlist = new HashMap<>();
 
-	@Inject
-	SyncCacheApi cache;
+	private AsyncCacheApi cache;
 
 	@Inject
-	public HomeController(HttpExecutionContext ec,SyncCacheApi cache) {
+	public HomeController(HttpExecutionContext ec,AsyncCacheApi cache) {
 		this.ec = ec;
 		this.cache = cache;	
-		cacheKeys = new ArrayList<>();
 		initializeWordList();
 	}
 	
@@ -73,7 +67,6 @@ public class HomeController extends Controller {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		
 	}
 
@@ -85,20 +78,10 @@ public class HomeController extends Controller {
 	 */
 	public CompletionStage<Result> index() {
 		
-		return supplyAsync(()->{
-
-			if(!cacheKeys.isEmpty()) {
-
-				//clear the cache and start new session for each refresh
-				cacheKeys.parallelStream().forEach(key -> cache.remove(key));
-
-				cacheKeys = new ArrayList<>();
-
-			}
-
-			return ok(views.html.index.render());
-
-		},ec.current());
+		CompletionStage<Done> resultAll = cache.removeAll();
+		
+		return resultAll.thenCombine(supplyAsync(()->
+					ok(views.html.index.render()),ec.current()),(d,ok)-> ok);
 	}
 
 	/**
@@ -106,39 +89,28 @@ public class HomeController extends Controller {
 	 * @return
 	 */
 	public CompletionStage<Result> getTweetsBySearch(String keyword){
-
-		return supplyAsync(()->{
-
-			Optional<List<Tweet>> cachedTweets = cache.get(keyword.toLowerCase());
-
-			List<Tweet> tweets = new ArrayList<>();
-
-			if(cachedTweets.isPresent()) {
-
-				tweets = cachedTweets.get();
-
-			}
-
-			else {
-
-				tweets = TweetService.searchForKeywordAndGetTweets(keyword);
-
-				cache.set(keyword.toLowerCase(), tweets);
-
-				cacheKeys.add(keyword.toLowerCase());
-
-			}
-
-			// Service to get the sentiment from tweets @author - Azim Surani
+		
+		CompletionStage<List<Tweet>> cachedTweets = cache.getOrElseUpdate(keyword,
+				() -> TweetService.searchForKeywordAndGetTweets(keyword),
+				60*15);
+		
+		return cachedTweets.thenApplyAsync(tweets-> {
+			
+			/*
+			  All the below oprations are non-blocking, so we are not using
+			  seperate thenApply for each of them instead we have combined 
+			  them into single thread operation
+			*/
+	
+			// Get the sentiment from tweets @author - Azim Surani
 			String sentiment = TweetService.getSentimentForTweets(tweets, wordlist);
 
 			TweetSearchResult response = new TweetSearchResult(keyword, tweets.subList(0, tweets.size() < 10 ? tweets.size() : 10) , sentiment);
 
 			JsonNode jsonObject = Json.toJson(response);
-
+	
 			return ok(Util.createResponse(jsonObject, true));
-
-
+			
 		},ec.current());
 
 	}
