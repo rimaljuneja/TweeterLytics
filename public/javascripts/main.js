@@ -34,7 +34,7 @@ jQuery.ajax({
  				 for (x in myObj) {
 				   	 txt += "<tr><td>" 
 				   	 + tweetcount + "." + "</td>" +
-				   	  "<td>" +  "<a id=\"" + myObj[x].userScreenName + "\"onclick=\"displayUser(" + myObj[x].userScreenName + ")\"" +  ">" + "@" + myObj[x].userScreenName + "</a></td>" +
+				   	  "<td>" +  "<a id=\"" + myObj[x].userScreenName + "\"onclick=\"displayUser(\'" + myObj[x].userid + "\')\"" +  ">" + "@" + myObj[x].userScreenName + "</a></td>" +
 				   	  "<td>" + myObj[x].tweetText + "</td></tr>";
 				   	  tweetcount++;
 				  }
@@ -65,13 +65,8 @@ function processSentiment(sentiment) {
 	return " &#128532;";
 	}
 }
-function displayUser(username) {
-if(username.length >1) {
-alert(username[0].textContent);
-}
-else {
-alert(username.textContent);
-}
+function displayUser(userid) {
+Spinner.show();
 }
 function wordStats(keyterm) {
 	Spinner.show();
