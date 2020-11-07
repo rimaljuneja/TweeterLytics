@@ -74,5 +74,53 @@ alert(username.textContent);
 }
 }
 function wordStats(keyterm) {
-	alert(keyterm);
+	Spinner.show();
+	statscontent = '';
+	jQuery.ajax({
+            url: "http://localhost:9000/statistics/" + keyterm,
+            type: "GET",
+            contentType: 'application/json; charset=utf-8',
+            success: function(resultData) {
+            result = JSON.parse(JSON.stringify(resultData));
+            var StringLength = result.data.stringLength;
+            statscontent+=`<head>
+            <title>SearchTerm Stats</title>
+			<style>
+			table, th, td {
+			  border: 1px solid black;
+			  border-collapse: collapse;
+			  width: 60%;
+			  text-align: center
+			}
+			
+			table{
+			  margin-left: auto; 
+			  margin-right: auto;
+			}
+			caption {
+				padding-bottom: 20px;
+				text-decoration: underline;
+			}
+			</style>
+			</head>`
+            statscontent += "<table>"
+      		statscontent += "<caption style='font-weight:600;font-color:black;'>" + "Word Level Statistics for search query tweet results :"+ keyterm  +
+      			  "</caption>"
+      		statscontent += "<tr><th>Word</th><th>Frequency</th></tr>"
+            for(let wordcount in StringLength)
+            {
+				statscontent+="<tr><td>" + wordcount + "</td><td>" + StringLength[wordcount] + "</td></tr>";
+            }
+           statscontent += "</table >"
+           Spinner.hide();
+			myWindow = window.open();
+           	myWindow.document.write(statscontent);
+            },
+            error : function(jqXHR, textStatus, errorThrown) {
+                       Spinner.hide();
+            },
+
+            timeout: 120000,
+        })
+            
 }
