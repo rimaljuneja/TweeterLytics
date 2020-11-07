@@ -56,13 +56,13 @@ document.getElementById('searchTerm').value = '';
 }
 function processSentiment(sentiment) {
 	if(sentiment == "neutral") {
-	return ":-|";
+	return " &#128528;";
 	}
 	else if(sentiment == "happy") {
-	return ":-)";
+	return " &#128522;";
 	}
 	else {
-	return ":-(";
+	return " &#128532;";
 	}
 }
 function displayUser(username) {
