@@ -59,9 +59,10 @@ public class TweetService {
 								status.getUser().getId())).
 						collect(Collectors.toList()));
 
-
 			} catch (TwitterException e) {
+				
 				e.printStackTrace();
+				
 			}
 
 			return searchResults;
