@@ -1,5 +1,6 @@
 package controllers;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Stream;
 
@@ -7,17 +8,14 @@ import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import akka.Done;
 import models.Tweet;
-import models.TweetSearchResult;
+
 import play.cache.AsyncCacheApi;
 import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.*;
 import services.TweetService;
 import utils.Util;
-
-import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,7 +33,7 @@ public class HomeController extends Controller {
 
 	private HttpExecutionContext ec;
 	
-	private Map<String,Integer> wordlist = new HashMap<>();
+	private Map<String,Integer> wordMap = new HashMap<>();
 
 	private AsyncCacheApi cache;
 
@@ -55,17 +53,25 @@ public class HomeController extends Controller {
 		Path path = Paths.get("Wordlist/positive-words.txt");
 
 		try (Stream<String> input = Files.lines(path))  {
-			input.parallel().forEach(word -> wordlist.put(word, 1));
+			
+			input.parallel().forEach(word -> wordMap.put(word, 1));
+			
 		} catch (IOException e) {
+			
 			e.printStackTrace();
+			
 		}
 		
 		path = Paths.get("Wordlist/negative-words.txt");
 
 		try (Stream<String> input = Files.lines(path))  {
-			input.parallel().forEach(word -> wordlist.put(word, -1));
+			
+			input.parallel().forEach(word -> wordMap.put(word, -1));
+			
 		} catch (IOException e) {
+			
 			e.printStackTrace();
+			
 		}
 		
 	}
@@ -78,40 +84,34 @@ public class HomeController extends Controller {
 	 */
 	public CompletionStage<Result> index() {
 		
-		CompletionStage<Done> resultAll = cache.removeAll();
-		
-		return resultAll.thenCombine(supplyAsync(()->
-					ok(views.html.index.render()),ec.current()),(d,ok)-> ok);
+		return CompletableFuture.supplyAsync(()->ok(views.html.index.render()));
 	}
 
 	/**
+	 * This method returns the latest 10 tweets containg the provided search keyword
 	 * @param keyword
-	 * @return
+	 * @return CompletionStage<Result>
+	 * @author Everyone
 	 */
-	public CompletionStage<Result> getTweetsBySearch(String keyword){
-		
-		CompletionStage<List<Tweet>> cachedTweets = cache.getOrElseUpdate(keyword,
+	public CompletionStage<Result> getTweetsBySearch(final String keyword){
+
+		CompletionStage<List<Tweet>> cachedTweets = cache.getOrElseUpdate(keyword.toLowerCase(),
 				() -> TweetService.searchForKeywordAndGetTweets(keyword),
-				60*15);
+				60*15); //Stores tweets in cache for 15 mins expiration time
+
+		return cachedTweets.thenComposeAsync(tweets->
 		
-		return cachedTweets.thenApplyAsync(tweets-> {
-			
-			/*
-			  All the below oprations are non-blocking, so we are not using
-			  seperate thenApply for each of them instead we have combined 
-			  them into single thread operation
-			*/
-	
-			// Get the sentiment from tweets @author - Azim Surani
-			String sentiment = TweetService.getSentimentForTweets(tweets, wordlist);
+					// This method return the final response containing TweetSearchResultObject
+					TweetService.getSentimentForTweets(tweets,keyword,wordMap)
+				
+				).thenApplyAsync(response-> {
+					
+					// Coversion of final TweetSearchResultObject object into JSON format
+					JsonNode jsonObject = Json.toJson(response);
 
-			TweetSearchResult response = new TweetSearchResult(keyword, tweets.subList(0, tweets.size() < 10 ? tweets.size() : 10) , sentiment);
-
-			JsonNode jsonObject = Json.toJson(response);
-	
-			return ok(Util.createResponse(jsonObject, true));
-			
-		},ec.current());
+					return ok(Util.createResponse(jsonObject, true));
+				
+				},ec.current());
 
 	}
 
