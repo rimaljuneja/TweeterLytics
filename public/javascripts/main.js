@@ -3,6 +3,8 @@ let finaltext = "";
 let count = 1;
 Spinner();
 Spinner.hide();
+
+/*function to show tweet words by search term */
 function search() {
 var searchkey = document.getElementById("searchTerm").value;
 Spinner.show();
@@ -34,7 +36,7 @@ jQuery.ajax({
  				 for (x in myObj) {
 				   	 txt += "<tr><td>" 
 				   	 + tweetcount + "." + "</td>" +
-				   	  "<td>" +  "<a id=\"" + myObj[x].userScreenName + "\"onclick=\"displayUser(" + myObj[x].userScreenName + ")\"" +  ">" + "@" + myObj[x].userScreenName + "</a></td>" +
+				   	  "<td>" +  "<a id=\"" + myObj[x].userScreenName + "\"onclick=\"displayUser(\'" + myObj[x].userid + "\')\"" +  ">" + "@" + myObj[x].userScreenName + "</a></td>" +
 				   	  "<td>" + myObj[x].tweetText + "</td></tr>";
 				   	  tweetcount++;
 				  }
@@ -51,28 +53,84 @@ jQuery.ajax({
             timeout: 120000,
         })
 }
+
+//function to clear the input field
 function clearInput() {
 document.getElementById('searchTerm').value = '';
 }
+
+/* function to process sentiment and 
+   display according sentiment */
+   
 function processSentiment(sentiment) {
 	if(sentiment == "neutral") {
-	return ":-|";
+	return " &#128528;";
 	}
 	else if(sentiment == "happy") {
-	return ":-)";
+	return " &#128522;";
 	}
 	else {
-	return ":-(";
+	return " &#128532;";
 	}
 }
-function displayUser(username) {
-if(username.length >1) {
-alert(username[0].textContent);
+
+/*function to display user profile */
+function displayUser(userid) {
+Spinner.show();
 }
-else {
-alert(username.textContent);
-}
-}
+
+/*function to display word level statistics 
+  for the search term selected */
 function wordStats(keyterm) {
-	alert(keyterm);
+	Spinner.show();
+	statscontent = '';
+	jQuery.ajax({
+            url: "http://localhost:9000/statistics/" + keyterm,
+            type: "GET",
+            contentType: 'application/json; charset=utf-8',
+            success: function(resultData) {
+            result = JSON.parse(JSON.stringify(resultData));
+            var StringLength = result.data.stringLength;
+            statscontent+=`
+            <html>
+            <head>
+            <title>SearchTerm Stats</title>
+			<style>
+			table, th, td {
+			  border: 1px solid black;
+			  border-collapse: collapse;
+			  width: 60%;
+			  text-align: center
+			}
+			
+			table{
+			  margin-left: auto; 
+			  margin-right: auto;
+			}
+			caption {
+				padding-bottom: 20px;
+				text-decoration: underline;
+			}
+			</style>
+			</head>`
+            statscontent += "<body><table>"
+      		statscontent += "<caption style='font-weight:600;font-color:black;'>" + "Word Level Statistics for search query tweet results :"+ keyterm  +
+      			  "</caption>"
+      		statscontent += "<tr><th>Word</th><th>Frequency</th></tr>"
+            for(let wordcount in StringLength)
+            {
+				statscontent+="<tr><td>" + wordcount + "</td><td>" + StringLength[wordcount] + "</td></tr>";
+            }
+           statscontent += "</table></body></html>"
+           Spinner.hide();
+			myWindow = window.open();
+           	myWindow.document.write(statscontent);
+            },
+            error : function(jqXHR, textStatus, errorThrown) {
+                       Spinner.hide();
+            },
+
+            timeout: 120000,
+        })
+            
 }

@@ -7,5 +7,8 @@ GET     /                           controllers.HomeController.index
 
 GET		/search/:keyword			controllers.HomeController.getTweetsBySearch(keyword:String)
 
+#Retrieving word level statistics for inputed search term
+GET		/statistics/:keyword			controllers.HomeController.getStatisticsForSearchTerm(keyword:String)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
