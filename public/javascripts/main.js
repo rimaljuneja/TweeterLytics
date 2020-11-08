@@ -3,6 +3,8 @@ let finaltext = "";
 let count = 1;
 Spinner();
 Spinner.hide();
+
+/*function to show tweet words by search term */
 function search() {
 var searchkey = document.getElementById("searchTerm").value;
 Spinner.show();
@@ -51,9 +53,15 @@ jQuery.ajax({
             timeout: 120000,
         })
 }
+
+//function to clear the input field
 function clearInput() {
 document.getElementById('searchTerm').value = '';
 }
+
+/* function to process sentiment and 
+   display according sentiment */
+   
 function processSentiment(sentiment) {
 	if(sentiment == "neutral") {
 	return " &#128528;";
@@ -65,9 +73,14 @@ function processSentiment(sentiment) {
 	return " &#128532;";
 	}
 }
+
+/*function to display user profile */
 function displayUser(userid) {
 Spinner.show();
 }
+
+/*function to display word level statistics 
+  for the search term selected */
 function wordStats(keyterm) {
 	Spinner.show();
 	statscontent = '';

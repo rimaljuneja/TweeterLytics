@@ -117,25 +117,31 @@ public class HomeController extends Controller {
 
 	}
 	
-	//Word-Level Statistics - @author: Pavit Srivatsan
-		public CompletionStage<Result> getStatisticsForSearchTerm(final String keyword) {
-		
-			CompletionStage<List<Tweet>> cachedTweets = cache.getOrElseUpdate(keyword.toLowerCase(),
-					() -> TweetService.searchForKeywordAndGetTweets(keyword),
-					60*15);
-			return cachedTweets.thenComposeAsync(tweets->
-			
-			// This method return the final response containing TweetSearchResultObject
-			TweetService.getWordLevelStatistics(tweets)
-		
-		).thenApplyAsync(response-> {
-			
+	/**
+	 * Returns word level statistics for the tweets corresponding to the
+	 * inputed search term
+	 * 
+	 * @param keyword
+	 * @return CompletionStage<Result>
+	 * @author Pavit Srivatsan
+	 */
+	public CompletionStage<Result> getStatisticsForSearchTerm(final String keyword) {
+
+		CompletionStage<List<Tweet>> cachedTweets = cache.getOrElseUpdate(keyword.toLowerCase(),
+				() -> TweetService.searchForKeywordAndGetTweets(keyword), 60 * 15);
+		return cachedTweets.thenComposeAsync(tweets ->
+
+		// This method return the final response containing TweetSearchResultObject
+		TweetService.getWordLevelStatistics(tweets)
+
+		).thenApplyAsync(response -> {
+
 			// Coversion of final TweetSearchResultObject object into JSON format
 			JsonNode jsonObject = Json.toJson(response);
 
 			return ok(Util.createResponse(jsonObject, true));
-		
-		},ec.current());
 
-}
+		}, ec.current());
+
+	}
 }

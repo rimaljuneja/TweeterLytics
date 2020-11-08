@@ -133,20 +133,35 @@ public class TweetService {
 
 		});
 	}
+	
+	/**
+	 * Calculates word level statistics for inputed tweet lists
+	 * 
+	 * @param tweets "List of Tweets"
+	 * @author pavit.srivatsan
+	 */
 	public static CompletableFuture<TweetWordStatistics>  getWordLevelStatistics(final List<Tweet> tweets) {
 		
 		return supplyAsync (()->{
 			
 			int tweetLength = tweets.size();
 			String Length = Integer.toString(tweetLength); 
+			
+			//Converting tweet list into list of strings
 			List<String> newList = new ArrayList<>(tweets.size());
 			for (Tweet mytweet : tweets) { 
 				  newList.add(String.valueOf(mytweet.tweetText)); 
 				}
+			
+			//Splitting words
 			List <String> list = Stream.of(newList.toString()).map(w -> w.split("\\s+")).flatMap(Arrays::stream)
 		            .collect(Collectors.toList());
+			
+			//Mapping words with their frequency 
 			Map<String, Integer> wordsCountMap = list.stream().map(eachWord -> eachWord)
 					.collect(Collectors.toMap(w -> w.toLowerCase(), w -> 1, Integer::sum));
+			
+			//Sorting the result in descending order
 			wordsCountMap = wordsCountMap.entrySet()
 					.stream()
 					.sorted(Map.Entry.<String, Integer> comparingByValue().reversed())
