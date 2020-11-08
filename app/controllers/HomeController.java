@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+
 /**
  * This controller contains an action to handle HTTP requests
  * to the application's home page.
@@ -114,5 +116,26 @@ public class HomeController extends Controller {
 				},ec.current());
 
 	}
+	
+	//Word-Level Statistics - @author: Pavit Srivatsan
+		public CompletionStage<Result> getStatisticsForSearchTerm(final String keyword) {
+		
+			CompletionStage<List<Tweet>> cachedTweets = cache.getOrElseUpdate(keyword.toLowerCase(),
+					() -> TweetService.searchForKeywordAndGetTweets(keyword),
+					60*15);
+			return cachedTweets.thenComposeAsync(tweets->
+			
+			// This method return the final response containing TweetSearchResultObject
+			TweetService.getWordLevelStatistics(tweets)
+		
+		).thenApplyAsync(response-> {
+			
+			// Coversion of final TweetSearchResultObject object into JSON format
+			JsonNode jsonObject = Json.toJson(response);
 
+			return ok(Util.createResponse(jsonObject, true));
+		
+		},ec.current());
+
+}
 }

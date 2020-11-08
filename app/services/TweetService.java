@@ -18,6 +18,17 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 
+import models.TweetWordStatistics;
+import java.util.LinkedHashMap;
+import java.util.stream.Stream;
+import java.util.Map.*;
+import static java.util.Comparator.reverseOrder;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+import java.util.Comparator;
+
 /**
  * @author everyone
  *
@@ -120,6 +131,27 @@ public class TweetService {
 			
 			return new TweetSearchResult(keyword, tweets.subList(0, tweets.size() < 10 ? tweets.size() : 10) , sentiment);
 
+		});
+	}
+	public static CompletableFuture<TweetWordStatistics>  getWordLevelStatistics(final List<Tweet> tweets) {
+		
+		return supplyAsync (()->{
+			
+			int tweetLength = tweets.size();
+			String Length = Integer.toString(tweetLength); 
+			List<String> newList = new ArrayList<>(tweets.size());
+			for (Tweet mytweet : tweets) { 
+				  newList.add(String.valueOf(mytweet.tweetText)); 
+				}
+			List <String> list = Stream.of(newList.toString()).map(w -> w.split("\\s+")).flatMap(Arrays::stream)
+		            .collect(Collectors.toList());
+			Map<String, Integer> wordsCountMap = list.stream().map(eachWord -> eachWord)
+					.collect(Collectors.toMap(w -> w.toLowerCase(), w -> 1, Integer::sum));
+			wordsCountMap = wordsCountMap.entrySet()
+					.stream()
+					.sorted(Map.Entry.<String, Integer> comparingByValue().reversed())
+					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2)-> e1, LinkedHashMap::new));
+			return new TweetWordStatistics(tweets.subList(0, tweets.size() < 10 ? tweets.size() : 10) , wordsCountMap);
 		});
 	}
 

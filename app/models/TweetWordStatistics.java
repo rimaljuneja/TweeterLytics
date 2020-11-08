@@ -11,19 +11,19 @@ public class TweetWordStatistics {
 	
 	private Map<String, Integer> stringlength;
 
-	public TweetWordStatistics(String keyword, List<Tweet> tweets, Map<String, Integer> stringlength) {
-		this.keyword = keyword;
+	public TweetWordStatistics( List<Tweet> tweets, Map<String, Integer> stringlength) {
+//		this.keyword = keyword;
 		this.tweets = tweets;
 		this.stringlength = stringlength;
 	}
 
-	public String getKeyword() {
-		return keyword;
-	}
-
-	public void setKeyword(String keyword) {
-		this.keyword = keyword;
-	}
+//	public String getKeyword() {
+//		return keyword;
+//	}
+//
+//	public void setKeyword(String keyword) {
+//		this.keyword = keyword;
+//	}
 
 	public List<Tweet> getTweets() {
 		return tweets;

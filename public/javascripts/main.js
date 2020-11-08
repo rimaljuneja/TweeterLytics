@@ -78,7 +78,9 @@ function wordStats(keyterm) {
             success: function(resultData) {
             result = JSON.parse(JSON.stringify(resultData));
             var StringLength = result.data.stringLength;
-            statscontent+=`<head>
+            statscontent+=`
+            <html>
+            <head>
             <title>SearchTerm Stats</title>
 			<style>
 			table, th, td {
@@ -98,7 +100,7 @@ function wordStats(keyterm) {
 			}
 			</style>
 			</head>`
-            statscontent += "<table>"
+            statscontent += "<body><table>"
       		statscontent += "<caption style='font-weight:600;font-color:black;'>" + "Word Level Statistics for search query tweet results :"+ keyterm  +
       			  "</caption>"
       		statscontent += "<tr><th>Word</th><th>Frequency</th></tr>"
@@ -106,7 +108,7 @@ function wordStats(keyterm) {
             {
 				statscontent+="<tr><td>" + wordcount + "</td><td>" + StringLength[wordcount] + "</td></tr>";
             }
-           statscontent += "</table >"
+           statscontent += "</table></body></html>"
            Spinner.hide();
 			myWindow = window.open();
            	myWindow.document.write(statscontent);
