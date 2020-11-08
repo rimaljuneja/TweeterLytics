@@ -25,6 +25,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import models.UserTimelineResult;
+import services.ProfileService;
+import twitter4j.Status;
+
 
 
 /**
@@ -34,7 +38,7 @@ import java.util.Map;
 public class HomeController extends Controller {
 
 	private HttpExecutionContext ec;
-	
+
 	private Map<String,Integer> wordMap = new HashMap<>();
 
 	private AsyncCacheApi cache;
@@ -45,37 +49,37 @@ public class HomeController extends Controller {
 		this.cache = cache;	
 		initializeWordList();
 	}
-	
+
 	/**
 	 * This method initializes wordlist with positive and negative words for sentiment analysis.
 	 * @author Azim Surani
 	 */
 	private void initializeWordList() {
-		
+
 		Path path = Paths.get("Wordlist/positive-words.txt");
 
 		try (Stream<String> input = Files.lines(path))  {
-			
+
 			input.parallel().forEach(word -> wordMap.put(word, 1));
-			
+
 		} catch (IOException e) {
-			
+
 			e.printStackTrace();
-			
+
 		}
-		
+
 		path = Paths.get("Wordlist/negative-words.txt");
 
 		try (Stream<String> input = Files.lines(path))  {
-			
+
 			input.parallel().forEach(word -> wordMap.put(word, -1));
-			
+
 		} catch (IOException e) {
-			
+
 			e.printStackTrace();
-			
+
 		}
-		
+
 	}
 
 	/**
@@ -85,7 +89,7 @@ public class HomeController extends Controller {
 	 * <code>GET</code> request with a path of <code>/</code>.
 	 */
 	public CompletionStage<Result> index() {
-		
+
 		return CompletableFuture.supplyAsync(()->ok(views.html.index.render()));
 	}
 
@@ -102,21 +106,21 @@ public class HomeController extends Controller {
 				60*15); //Stores tweets in cache for 15 mins expiration time
 
 		return cachedTweets.thenComposeAsync(tweets->
-		
-					// This method return the final response containing TweetSearchResultObject
-					TweetService.getSentimentForTweets(tweets,keyword,wordMap)
-				
+
+		// This method return the final response containing TweetSearchResultObject
+		TweetService.getSentimentForTweets(tweets,keyword,wordMap)
+
 				).thenApplyAsync(response-> {
-					
+
 					// Coversion of final TweetSearchResultObject object into JSON format
 					JsonNode jsonObject = Json.toJson(response);
 
 					return ok(Util.createResponse(jsonObject, true));
-				
+
 				},ec.current());
 
 	}
-	
+
 	/**
 	 * Returns word level statistics for the tweets corresponding to the
 	 * inputed search term
@@ -134,14 +138,29 @@ public class HomeController extends Controller {
 		// This method return the final response containing TweetSearchResultObject
 		TweetService.getWordLevelStatistics(tweets)
 
-		).thenApplyAsync(response -> {
+				).thenApplyAsync(response -> {
 
-			// Coversion of final TweetSearchResultObject object into JSON format
+					// Coversion of final TweetSearchResultObject object into JSON format
+					JsonNode jsonObject = Json.toJson(response);
+
+					return ok(Util.createResponse(jsonObject, true));
+
+				}, ec.current());
+
+	}
+
+	public CompletionStage<Result> getUserTimeline(final String userId) {
+
+		return ProfileService.getUserTimelineeByID(userId).thenApplyAsync((userTweets)->{
+
+			UserTimelineResult response = new UserTimelineResult(userId, userTweets.subList(0, userTweets.size() < 10 ? userTweets.size() : 10));
+
 			JsonNode jsonObject = Json.toJson(response);
 
 			return ok(Util.createResponse(jsonObject, true));
-
-		}, ec.current());
-
+		},ec.current());
 	}
+
+
+
 }

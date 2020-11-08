@@ -7,13 +7,10 @@ public class UserTimelineResult {
 	private String userId;
 	
 	private List<Tweet> tweets;
-	
-	private String sentiment;
 
-	public UserTimelineResult(String userId, List<Tweet> tweets, String sentiment) {
+	public UserTimelineResult(String userId, List<Tweet> tweets) {
 		this.userId = userId;
 		this.tweets = tweets;
-		this.sentiment = sentiment;
 	}
 
 	public String getUserId() {
@@ -30,14 +27,6 @@ public class UserTimelineResult {
 
 	public void setTweets(List<Tweet> tweets) {
 		this.tweets = tweets;
-	}
-
-	public String getSentiment() {
-		return sentiment;
-	}
-
-	public void setSentiment(String sentiment) {
-		this.sentiment = sentiment;
 	}
 
 }

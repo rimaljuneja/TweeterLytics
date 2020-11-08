@@ -36,7 +36,7 @@ jQuery.ajax({
  				 for (x in myObj) {
 				   	 txt += "<tr><td>" 
 				   	 + tweetcount + "." + "</td>" +
-				   	  "<td>" +  "<a id=\"" + myObj[x].userScreenName + "\"onclick=\"displayUser(\'" + myObj[x].userid + "\')\"" +  ">" + "@" + myObj[x].userScreenName + "</a></td>" +
+				   	  "<td>" +  "<a id=\"" + myObj[x].userScreenName + "\"onclick=\"displayUser(\'" + myObj[x].userScreenName + "\')\"" +  ">" + "@" + myObj[x].userScreenName + "</a></td>" +
 				   	  "<td>" + myObj[x].tweetText + "</td></tr>";
 				   	  tweetcount++;
 				  }
@@ -77,6 +77,59 @@ function processSentiment(sentiment) {
 /*function to display user profile */
 function displayUser(userid) {
 Spinner.show();
+userTimeline = '';
+jQuery.ajax({
+            url: "http://localhost:9000/getUserTimeline/" + (userid),
+            type: "GET",
+            contentType: 'application/json; charset=utf-8',
+            
+            success: function(resultData) {
+            debugger;
+            result = JSON.parse(JSON.stringify(resultData));
+            
+            var UserDetails = result.data.tweets;
+            /*userTimeline+=`<head>
+            <title>User Profile</title>
+			<style>
+			table,  td {
+			  border: 1px solid black;
+			  border-collapse: collapse;
+			  width: 60%;
+			  text-align: center
+			}
+			
+			table{
+			  margin-left: auto; 
+			  margin-right: auto;
+			}
+			caption {
+				padding-bottom: 20px;
+				text-decoration: underline;
+			}
+			</style>
+			</head>`*/
+			var tweetcount = 1;
+			
+			 userTimeline += "<table border='1'>"
+      		 userTimeline += "<caption>"+ "User Profile:" + "</caption>"
+ 				 for (x in UserDetails) {
+				   	 userTimeline += "<tr><td>" 
+				   	 + tweetcount + "." + "</td>" +
+				   	 "<td>" + UserDetails[x].tweetText + "</td></tr>";
+				   	  tweetcount++;
+				  }
+     			 userTimeline += "</table>";
+             Spinner.hide();
+			userWindow = window.open();
+           	userWindow.document.write(userTimeline);
+            },
+            error : function(jqXHR, textStatus, errorThrown) {
+                       Spinner.hide();
+            },
+
+            timeout: 120000,
+        })
+
 }
 
 /*function to display word level statistics 
