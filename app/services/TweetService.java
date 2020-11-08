@@ -150,7 +150,7 @@ public class TweetService {
 			//Converting tweet list into list of strings
 			List<String> newList = new ArrayList<>(tweets.size());
 			for (Tweet mytweet : tweets) { 
-				  newList.add(String.valueOf(mytweet.tweetText)); 
+				  newList.add(String.valueOf(mytweet.getTweetText())); 
 				}
 			
 			//Splitting words
