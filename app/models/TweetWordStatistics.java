@@ -5,29 +5,20 @@ import java.util.Map;
 
 public class TweetWordStatistics {
 	
-	private List<Tweet> tweets;
 	
-	private Map<String, Integer> stringlength;
+	private Map<String, Integer> wordfrequency;
 
-	public TweetWordStatistics( List<Tweet> tweets, Map<String, Integer> stringlength) {
-		this.tweets = tweets;
-		this.stringlength = stringlength;
+	public TweetWordStatistics( Map<String, Integer> wordfrequency) {
+		this.wordfrequency = wordfrequency;
 	}
 
-	public List<Tweet> getTweets() {
-		return tweets;
+
+	public Map<String, Integer> getwordfrequency() {
+		return wordfrequency;
 	}
 
-	public void setTweets(List<Tweet> tweets) {
-		this.tweets = tweets;
-	}
-
-	public Map<String, Integer> getStringLength() {
-		return stringlength;
-	}
-
-	public void setStringLength(Map<String, Integer> stringlength) {
-		this.stringlength = stringlength;
+	public void setwordfrequency(Map<String, Integer> wordfrequency) {
+		this.wordfrequency = wordfrequency;
 	}
 
 }
