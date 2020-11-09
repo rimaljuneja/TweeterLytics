@@ -8,7 +8,7 @@ package models;
  */
 public class Tweet {
 	
-	public String tweetText;
+	private String tweetText;
 	
 	private String userScreenName;
 	
