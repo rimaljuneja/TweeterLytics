@@ -166,7 +166,7 @@ public class TweetService {
 					.stream()
 					.sorted(Map.Entry.<String, Integer> comparingByValue().reversed())
 					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2)-> e1, LinkedHashMap::new));
-			return new TweetWordStatistics(tweets.subList(0, tweets.size() < 10 ? tweets.size() : 10) , wordsCountMap);
+			return new TweetWordStatistics(wordsCountMap);
 		});
 	}
 

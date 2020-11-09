@@ -143,7 +143,7 @@ function wordStats(keyterm) {
             contentType: 'application/json; charset=utf-8',
             success: function(resultData) {
             result = JSON.parse(JSON.stringify(resultData));
-            var StringLength = result.data.stringLength;
+            var WordFrequency = result.data.wordfrequency;
             statscontent+=`
             <html>
             <head>
@@ -170,9 +170,9 @@ function wordStats(keyterm) {
       		statscontent += "<caption style='font-weight:600;font-color:black;'>" + "Word Level Statistics for search query tweet results :"+ keyterm  +
       			  "</caption>"
       		statscontent += "<tr><th>Word</th><th>Frequency</th></tr>"
-            for(let wordcount in StringLength)
+            for(let wordcount in WordFrequency)
             {
-				statscontent+="<tr><td>" + wordcount + "</td><td>" + StringLength[wordcount] + "</td></tr>";
+				statscontent+="<tr><td>" + wordcount + "</td><td>" + WordFrequency[wordcount] + "</td></tr>";
             }
            statscontent += "</table></body></html>"
            Spinner.hide();

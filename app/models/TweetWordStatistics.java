@@ -1,5 +1,8 @@
 package models;
-
+/**
+ * Model class for Twitter word Statistics
+ * @author pavit.srivatsan
+ */
 import java.util.List;
 import java.util.Map;
 

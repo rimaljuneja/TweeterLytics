@@ -29,8 +29,8 @@ public class Util {
             result.put("data", (String) response);
         } else {
             result.putPOJO("data", response);
+        	
         }
-        
         return result;
     }
 }
