@@ -144,6 +144,14 @@ function wordStats(keyterm) {
             success: function(resultData) {
             result = JSON.parse(JSON.stringify(resultData));
             var WordFrequency = result.data.wordfrequency;
+            var sortable = [];
+			for (var word in WordFrequency) {
+    		sortable.push([word, WordFrequency[word]]);
+			}
+			sortable.sort(function(a, b) {
+    			return a[1] - b[1];
+			});
+			sortable.reverse();
             statscontent+=`
             <html>
             <head>
@@ -170,9 +178,9 @@ function wordStats(keyterm) {
       		statscontent += "<caption style='font-weight:600;font-color:black;'>" + "Word Level Statistics for search query tweet results :"+ keyterm  +
       			  "</caption>"
       		statscontent += "<tr><th>Word</th><th>Frequency</th></tr>"
-            for(let wordcount in WordFrequency)
+            for(let wordcount in sortable)
             {
-				statscontent+="<tr><td>" + wordcount + "</td><td>" + WordFrequency[wordcount] + "</td></tr>";
+				statscontent+="<tr><td>" + sortable[wordcount][0] + "</td><td>" + sortable[wordcount][1] + "</td></tr>";
             }
            statscontent += "</table></body></html>"
            Spinner.hide();
