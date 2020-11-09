@@ -27,7 +27,6 @@ import java.util.Map;
 
 import models.UserTimelineResult;
 import services.ProfileService;
-import twitter4j.Status;
 
 
 
@@ -134,9 +133,9 @@ public class HomeController extends Controller {
 		CompletionStage<List<Tweet>> cachedTweets = cache.getOrElseUpdate(keyword.toLowerCase(),
 				() -> TweetService.searchForKeywordAndGetTweets(keyword), 60 * 15);
 		return cachedTweets.thenComposeAsync(tweets ->
-
-		// This method return the final response containing TweetSearchResultObject
-		TweetService.getWordLevelStatistics(tweets)
+		
+				// This method return the final response containing TweetSearchResultObject
+				TweetService.getWordLevelStatistics(tweets)
 
 				).thenApplyAsync(response -> {
 
