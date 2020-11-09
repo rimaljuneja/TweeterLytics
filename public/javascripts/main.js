@@ -37,7 +37,7 @@ jQuery.ajax({
 				   	 txt += "<tr><td>" 
 				   	 + tweetcount + "." + "</td>" +
 				   	  "<td>" +  "<a id=\"" + myObj[x].userScreenName + "\"onclick=\"displayUser(\'" + myObj[x].userScreenName + "\')\"" +  ">" + "@" + myObj[x].userScreenName + "</a></td>" +
-				   	  "<td>" + myObj[x].tweetText + "</td></tr>";
+				   	  "<td>" + displayHashTags(myObj[x].tweetText) + "</td></tr>";
 				   	  tweetcount++;
 				  }
      			 txt += "</table>"    
@@ -52,6 +52,17 @@ jQuery.ajax({
 
             timeout: 120000,
         })
+}
+
+//function to display hashtags
+function displayHashTags(input) {
+input = input.replace(/(^|\s)(#[a-z\d-]+)/ig, "$1<a onclick=\"processHashTags('$2')\">$2</a>");
+return input;
+}
+
+//function to process hashtags
+function processHashTags(hashtag) {
+alert(hashtag);
 }
 
 //function to clear the input field
