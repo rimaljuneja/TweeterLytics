@@ -27,7 +27,6 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
-import java.util.Comparator;
 
 /**
  * @author everyone
@@ -85,7 +84,7 @@ public class TweetService {
 	 * It calculates the average sentiment of tweets passed.
 	 * @param tweets "List of Tweets"
 	 * @param wordMap "Word Map of postive and negative words"
-	 * @return String sentiment
+	 * @return CompletableFuture<TweetSearchResult> "Final TweetSearchResult Object including sentiment data"
 	 * @author Azim Surani
 	 */
 	public static CompletableFuture<TweetSearchResult>  getSentimentForTweets(final List<Tweet> tweets,final String keyword,final Map<String,Integer> wordMap) {
@@ -166,7 +165,7 @@ public class TweetService {
 					.stream()
 					.sorted(Map.Entry.<String, Integer> comparingByValue().reversed())
 					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2)-> e1, LinkedHashMap::new));
-			return new TweetWordStatistics(tweets.subList(0, tweets.size() < 10 ? tweets.size() : 10) , wordsCountMap);
+			return new TweetWordStatistics(wordsCountMap);
 		});
 	}
 
