@@ -37,7 +37,7 @@ jQuery.ajax({
 				   	 txt += "<tr><td>" 
 				   	 + tweetcount + "." + "</td>" +
 				   	  "<td>" +  "<a id=\"" + myObj[x].userScreenName + "\"onclick=\"displayUser(\'" + myObj[x].userScreenName + "\')\"" +  ">" + "@" + myObj[x].userScreenName + "</a></td>" +
-				   	  "<td>" + myObj[x].tweetText + "</td></tr>";
+				   	  "<td>" + displayHashTags(myObj[x].tweetText) + "</td></tr>";
 				   	  tweetcount++;
 				  }
      			 txt += "</table>"    
@@ -52,6 +52,17 @@ jQuery.ajax({
 
             timeout: 120000,
         })
+}
+
+//function to display hashtags
+function displayHashTags(input) {
+input = input.replace(/(^|\s)(#[a-z\d-]+)/ig, "$1<a onclick=\"processHashTags('$2')\">$2</a>");
+return input;
+}
+
+//function to process hashtags
+function processHashTags(hashtag) {
+alert(hashtag);
 }
 
 //function to clear the input field
@@ -143,7 +154,15 @@ function wordStats(keyterm) {
             contentType: 'application/json; charset=utf-8',
             success: function(resultData) {
             result = JSON.parse(JSON.stringify(resultData));
-            var StringLength = result.data.stringLength;
+            var WordFrequency = result.data.wordfrequency;
+            var sortable = [];
+			for (var word in WordFrequency) {
+    		sortable.push([word, WordFrequency[word]]);
+			}
+			sortable.sort(function(a, b) {
+    			return a[1] - b[1];
+			});
+			sortable.reverse();
             statscontent+=`
             <html>
             <head>
@@ -170,9 +189,9 @@ function wordStats(keyterm) {
       		statscontent += "<caption style='font-weight:600;font-color:black;'>" + "Word Level Statistics for search query tweet results :"+ keyterm  +
       			  "</caption>"
       		statscontent += "<tr><th>Word</th><th>Frequency</th></tr>"
-            for(let wordcount in StringLength)
+            for(let wordcount in sortable)
             {
-				statscontent+="<tr><td>" + wordcount + "</td><td>" + StringLength[wordcount] + "</td></tr>";
+				statscontent+="<tr><td>" + sortable[wordcount][0] + "</td><td>" + sortable[wordcount][1] + "</td></tr>";
             }
            statscontent += "</table></body></html>"
            Spinner.hide();
