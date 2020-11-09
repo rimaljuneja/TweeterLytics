@@ -21,12 +21,6 @@ import twitter4j.TwitterFactory;
 import models.TweetWordStatistics;
 import java.util.LinkedHashMap;
 import java.util.stream.Stream;
-import java.util.Map.*;
-import static java.util.Comparator.reverseOrder;
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.counting;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 
 /**
  * @author everyone
@@ -142,9 +136,6 @@ public class TweetService {
 	public static CompletableFuture<TweetWordStatistics>  getWordLevelStatistics(final List<Tweet> tweets) {
 		
 		return supplyAsync (()->{
-			
-			int tweetLength = tweets.size();
-			String Length = Integer.toString(tweetLength); 
 			
 			//Converting tweet list into list of strings
 			List<String> newList = new ArrayList<>(tweets.size());
