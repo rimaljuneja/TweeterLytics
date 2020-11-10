@@ -14,7 +14,7 @@ GET		/statistics/:keyword			controllers.HomeController.getStatisticsForSearchTer
 GET     /getUserTimeline/:userId           controllers.HomeController.getUserTimeline(userId: String)
 
 # Fetch the Tweet by hashtag
-GET     /search/:hashtag            controllers.HomeController.getTweetByHashtag(hashtag: String)
+GET     /searchbyhashtag/:hashtag            controllers.HomeController.getTweetByHashtag(hashtag: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

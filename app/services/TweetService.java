@@ -172,7 +172,7 @@ public class TweetService {
 
 		return supplyAsync (()->{
 			
-			return new TweetHastagSearchResult(hashtag, tweets.subList(0, tweets.size() < 10 ? tweets.size() : 10));
+			return new TweetHashtagSearchResult(hashtag, tweets.subList(0, tweets.size() < 10 ? tweets.size() : 10));
 
 		});
 	}
