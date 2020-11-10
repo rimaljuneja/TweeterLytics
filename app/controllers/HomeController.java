@@ -164,7 +164,7 @@ public class HomeController extends Controller {
 	 * This method returns the latest 10 Tweets containg the provided search hastag
 	 * @param hastag
 	 * @return CompletionStage<Result>
-	 * @author aayush
+	 * @author Aayush Khandelwal
 	 */
 	public CompletionStage<Result> getTweetByHashtag(final String hashtag){
 
@@ -174,12 +174,12 @@ public class HomeController extends Controller {
 
 		return cachedTweets.thenComposeAsync(tweets->
 
-		// This method return the final response containing TweetSearchResultObject
+		// This method return the final response containing TweetHashtagSearchResultObject
 		TweetService.getHashtagForTweets(tweets,hashtag)
 
 				).thenApplyAsync(response-> {
 
-					// Coversion of final TweetSearchResultObject object into JSON format
+					// Coversion of final TweetHashtagSearchResultObject object into JSON format
 					JsonNode jsonObject = Json.toJson(response);
 
 					return ok(Util.createResponse(jsonObject, true));

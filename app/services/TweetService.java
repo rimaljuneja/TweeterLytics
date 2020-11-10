@@ -161,6 +161,12 @@ public class TweetService {
 		});
 	}
 	
+	/**
+	 * For getting tweet by hashtag
+	 * @param tweets "List of Tweets"
+	 * @param hastag
+	 * @author Aayush Khandelwal
+	 */
 	
 	public static CompletableFuture<TweetHashtagSearchResult>  getHashtagForTweets(final List<Tweet> tweets,final String hashtag) {
 
