@@ -28,18 +28,28 @@ import java.util.stream.Stream;
  *
  */
 public class TweetService {
+	
+	private Twitter twitter;
+	
+	/**
+	 * Constructor method to initialize TweetService object
+	 */
+	public TweetService() {
+		/*
+		Initializing twitter object, 
+	 	so that authentication is done only once when object is created*/
+		twitter = TwitterFactory.getSingleton();
+	}
 
 	/**
 	 * @param keyword
 	 * @return
 	 */
-	public static CompletionStage<List<Tweet>> searchForKeywordAndGetTweets(final String keyword){
+	public CompletionStage<List<Tweet>> searchForKeywordAndGetTweets(final String keyword){
 		
 		return supplyAsync (()->{
 
 			List<Tweet> searchResults = new ArrayList<>();
-
-			Twitter twitter = TwitterFactory.getSingleton();
 
 			//Searches for exact phrase and excludes retweets to avoid duplication
 			Query query = new Query("\\\"" +keyword+ "\\\"" + " +exclude:retweets");
@@ -82,7 +92,7 @@ public class TweetService {
 	 * @return CompletableFuture<TweetSearchResult> "Final TweetSearchResult Object including sentiment data"
 	 * @author Azim Surani
 	 */
-	public static CompletableFuture<TweetSearchResult>  getSentimentForTweets(final List<Tweet> tweets,final String keyword,final Map<String,Integer> wordMap) {
+	public CompletableFuture<TweetSearchResult>  getSentimentForTweets(final List<Tweet> tweets,final String keyword,final Map<String,Integer> wordMap) {
 
 		return supplyAsync (()->{
 
@@ -134,7 +144,7 @@ public class TweetService {
 	 * @param tweets "List of Tweets"
 	 * @author pavit.srivatsan
 	 */
-	public static CompletableFuture<TweetWordStatistics>  getWordLevelStatistics(final List<Tweet> tweets) {
+	public CompletableFuture<TweetWordStatistics>  getWordLevelStatistics(final List<Tweet> tweets) {
 		
 		return supplyAsync (()->{
 			
@@ -168,7 +178,7 @@ public class TweetService {
 	 * @author Aayush Khandelwal
 	 */
 	
-	public static CompletableFuture<TweetHashtagSearchResult>  getHashtagForTweets(final List<Tweet> tweets,final String hashtag) {
+	public CompletableFuture<TweetHashtagSearchResult>  getHashtagForTweets(final List<Tweet> tweets,final String hashtag) {
 
 		return supplyAsync (()->{
 			

@@ -41,11 +41,15 @@ public class HomeController extends Controller {
 	private Map<String,Integer> wordMap = new HashMap<>();
 
 	private AsyncCacheApi cache;
+	
+	private TweetService tweetService;
+	
 
 	@Inject
 	public HomeController(HttpExecutionContext ec,AsyncCacheApi cache) {
 		this.ec = ec;
 		this.cache = cache;	
+		tweetService = new TweetService();
 		initializeWordList();
 	}
 
@@ -101,13 +105,13 @@ public class HomeController extends Controller {
 	public CompletionStage<Result> getTweetsBySearch(final String keyword){
 
 		CompletionStage<List<Tweet>> cachedTweets = cache.getOrElseUpdate(keyword.toLowerCase(),
-				() -> TweetService.searchForKeywordAndGetTweets(keyword),
+				() -> tweetService.searchForKeywordAndGetTweets(keyword),
 				60*15); //Stores tweets in cache for 15 mins expiration time
 
 		return cachedTweets.thenComposeAsync(tweets->
 
-		// This method return the final response containing TweetSearchResultObject
-		TweetService.getSentimentForTweets(tweets,keyword,wordMap)
+				// This method return the final response containing TweetSearchResultObject
+				tweetService.getSentimentForTweets(tweets,keyword,wordMap)
 
 				).thenApplyAsync(response-> {
 
@@ -131,11 +135,11 @@ public class HomeController extends Controller {
 	public CompletionStage<Result> getStatisticsForSearchTerm(final String keyword) {
 
 		CompletionStage<List<Tweet>> cachedTweets = cache.getOrElseUpdate(keyword.toLowerCase(),
-				() -> TweetService.searchForKeywordAndGetTweets(keyword), 60 * 15);
+				() -> tweetService.searchForKeywordAndGetTweets(keyword), 60 * 15);
 		return cachedTweets.thenComposeAsync(tweets ->
 		
 				// This method return the final response containing TweetSearchResultObject
-				TweetService.getWordLevelStatistics(tweets)
+				tweetService.getWordLevelStatistics(tweets)
 
 				).thenApplyAsync(response -> {
 
@@ -168,10 +172,10 @@ public class HomeController extends Controller {
 	 */
 	public CompletionStage<Result> getTweetByHashtag(final String hashtag){
 
-		return  TweetService.searchForKeywordAndGetTweets("#"+hashtag).thenComposeAsync(tweets->
+		return  tweetService.searchForKeywordAndGetTweets("#"+hashtag).thenComposeAsync(tweets->
 
 		// This method return the final response containing TweetHashtagSearchResultObject
-		TweetService.getHashtagForTweets(tweets,hashtag)
+		tweetService.getHashtagForTweets(tweets,hashtag)
 
 				).thenApplyAsync(response-> {
 
