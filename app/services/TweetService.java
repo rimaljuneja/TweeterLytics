@@ -12,6 +12,7 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import models.Tweet;
 import models.TweetSearchResult;
+import models.TweetHashtagSearchResult;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Twitter;
@@ -157,6 +158,16 @@ public class TweetService {
 					.sorted(Map.Entry.<String, Integer> comparingByValue().reversed())
 					.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2)-> e1, LinkedHashMap::new));
 			return new TweetWordStatistics(wordsCountMap);
+		});
+	}
+	
+	
+	public static CompletableFuture<TweetHashtagSearchResult>  getHashtagForTweets(final List<Tweet> tweets,final String hashtag) {
+
+		return supplyAsync (()->{
+			
+			return new TweetHastagSearchResult(hashtag, tweets.subList(0, tweets.size() < 10 ? tweets.size() : 10));
+
 		});
 	}
 

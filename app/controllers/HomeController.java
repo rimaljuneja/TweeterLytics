@@ -159,6 +159,36 @@ public class HomeController extends Controller {
 			return ok(Util.createResponse(jsonObject, true));
 		},ec.current());
 	}
+	
+	/**
+	 * This method returns the latest 10 Tweets containg the provided search hastag
+	 * @param hastag
+	 * @return CompletionStage<Result>
+	 * @author aayush
+	 */
+	public CompletionStage<Result> getTweetByHashtag(final String hashtag){
+
+		CompletionStage<List<Tweet>> cachedTweets = cache.getOrElseUpdate(keyword.toLowerCase(),
+				() -> TweetService.searchForKeywordAndGetTweets(hastag),
+				60*15); //Stores tweets in cache for 15 mins expiration time
+
+		return cachedTweets.thenComposeAsync(tweets->
+
+		// This method return the final response containing TweetSearchResultObject
+		TweetService.getHashtagForTweets(tweets,hashtag)
+
+				).thenApplyAsync(response-> {
+
+					// Coversion of final TweetSearchResultObject object into JSON format
+					JsonNode jsonObject = Json.toJson(response);
+
+					return ok(Util.createResponse(jsonObject, true));
+
+				},ec.current());
+
+	}
+	
+	
 
 
 
