@@ -171,8 +171,12 @@ public class HomeController extends Controller {
 	 * @author Aayush Khandelwal
 	 */
 	public CompletionStage<Result> getTweetByHashtag(final String hashtag){
+		
+		CompletionStage<List<Tweet>> cachedTweets = cache.getOrElseUpdate(hashtag.toLowerCase(),
+				() -> tweetService.searchForKeywordAndGetTweets("#"+hashtag),
+				60*15); //Stores tweets in cache for 15 mins expiration time
 
-		return  tweetService.searchForKeywordAndGetTweets("#"+hashtag).thenComposeAsync(tweets->
+		return  cachedTweets.thenComposeAsync(tweets->
 
 		// This method return the final response containing TweetHashtagSearchResultObject
 		tweetService.getHashtagForTweets(tweets,hashtag)
