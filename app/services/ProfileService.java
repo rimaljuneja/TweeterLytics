@@ -29,8 +29,8 @@ public class ProfileService {
 					parallelStream().
 					map(status->
 						new Tweet(	status.getText(),
-									status.getUser().getScreenName(), 
-									status.getUser().getId())).
+									status.getUser().getScreenName()
+									)).
 					collect(Collectors.toList()));
            
             System.out.println("Showing @" + userId + "'s user timeline.");
