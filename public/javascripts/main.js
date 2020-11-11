@@ -3,6 +3,12 @@ let finaltext = "";
 let count = 1;
 Spinner();
 Spinner.hide();
+var input = document.getElementById("searchTerm");
+input.addEventListener("keyup", function(event) {
+  if (event.keyCode === 13) {
+	search();
+	}
+});
 
 /*function to show tweet words by search term */
 function search() {
@@ -62,8 +68,54 @@ return input;
 
 //function to process hashtags
 function processHashTags(hashtag) {
-alert(hashtag);
+var regexp = /#(\S)/g;
+hashtag = hashtag.replace(regexp, '$1');
+Spinner.show();
+jQuery.ajax({
+            url: "http://localhost:9000/searchbyhashtag/" + (hashtag),
+            type: "GET",
+            contentType: 'application/json; charset=utf-8',
+            success: function(resultData) {
+            	if(count < 11) {
+            	count++;
+            	}
+     			 else {
+      			finaltext = "";
+      			txt = "";
+      			count = 1;
+      			}
+      			if(count === 11) {
+      			document.getElementById('goButton').disabled= true;
+      			}
+      			debugger;
+      			var tweetcount = 1;
+                var result = JSON.stringify(resultData);
+				var tweets = resultData.data.tweets;
+				 myObj = JSON.parse(JSON.stringify(tweets));
+      			 txt += "<table border='1'>"
+      			 txt += "<caption>" + "Hashtag Result:" + hashtag
+      			  "</caption>"
+ 				 for (x in myObj) {
+				   	 txt += "<tr><td>" 
+				   	 + tweetcount + "." + "</td>" +
+				   	  "<td>" +  "<a id=\"" + myObj[x].userScreenName + "\"onclick=\"displayUser(\'" + myObj[x].userScreenName + "\')\"" +  ">" + "@" + myObj[x].userScreenName + "</a></td>" +
+				   	  "<td>" + displayHashTags(myObj[x].tweetText) + "</td></tr>";
+				   	  tweetcount++;
+				  }
+     			 txt += "</table>"    
+     			 finaltext = txt + finaltext;
+     			 txt = "";
+			     document.getElementById("demo").innerHTML = finaltext;
+                Spinner.hide();
+            },
+            error : function(jqXHR, textStatus, errorThrown) {
+            Spinner.hide();
+            },
+
+            timeout: 120000,
+        })
 }
+
 
 //function to clear the input field
 function clearInput() {

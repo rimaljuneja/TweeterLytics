@@ -28,5 +28,25 @@ public class HomeControllerTest extends WithApplication {
         Result result = route(app, request);
         assertEquals(OK, result.status());
     }
+    
+//    @Test
+//    public void testWordStatistics() {
+//        Http.RequestBuilder request = new Http.RequestBuilder()
+//                .method(GET)
+//                .uri("/statistics/:keyword");
+//
+//        Result result = route(app, request);
+//        assertEquals(OK, result.status());
+//    }
+    
+    @Test
+    public void testHashtag() {
+        Http.RequestBuilder request = new Http.RequestBuilder()
+                .method(GET)
+                .uri("/searchbyhashtag/:hashtag");
+
+        Result result = route(app, request);
+        assertEquals("application/json", result.contentType().get());
+    }
 
 }

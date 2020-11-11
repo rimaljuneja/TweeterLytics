@@ -7,12 +7,15 @@ lazy val root = (project in file(".")).enablePlugins(PlayJava)
 
 scalaVersion := "2.13.3"
 
+//libraryDependencies += "org.mockito" % "mockito-core" % "3.6.0"
+
 libraryDependencies += guice
 
 libraryDependencies += "org.twitter4j" % "twitter4j-core" % "4.0.7"
 
 libraryDependencies ++= Seq(
-  caffeine
+  caffeine,
+  "org.mockito" % "mockito-core" % "3.6.0"
 )
 
 // Compile the project before generating Eclipse files, so
