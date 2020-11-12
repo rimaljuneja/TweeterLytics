@@ -69,10 +69,7 @@ public class HomeControllerTest extends WithApplication {
 						
 						)));
 		mockSentiment.put("Canada Economy", "neutral");
-		
-		
-		
-		
+	
 	}
 
     @Override
