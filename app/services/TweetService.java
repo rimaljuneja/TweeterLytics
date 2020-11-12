@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 /**
  * This service class uses the Twitter API to fetch the tweets and related information.
  * @author HGG02
- *
+ * @version 1.0.0
  */
 public class TweetService {
 	
@@ -35,6 +35,7 @@ public class TweetService {
 	
 	/**
 	 * Constructor method to initialize TweetService object
+	 * @author HGG02
 	 */
 	public TweetService() {
 		/*
@@ -44,8 +45,10 @@ public class TweetService {
 	}
 
 	/**
+	 * It calls the twitter api and fetches latest 100 Tweets
 	 * @param keyword
 	 * @return List of Tweets
+	 * @author HGG02
 	 */
 	public CompletionStage<List<Tweet>> searchForKeywordAndGetTweets(final String keyword){
 		
