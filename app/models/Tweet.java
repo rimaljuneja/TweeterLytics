@@ -1,7 +1,7 @@
 package models;
 
 /**
- *Model class for handling Tweet data
+ * Model class for handling Tweet data
  * 
  * @author HGG02
  * @version 1.0
