@@ -10,11 +10,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import models.Tweet;
 
-import play.cache.AsyncCacheApi;
 import play.libs.Json;
-import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.*;
 import services.TweetService;
+import utils.Cache;
 import utils.Util;
 
 import java.io.IOException;
@@ -35,26 +34,23 @@ import services.ProfileService;
  * to the application's home page.
  */
 public class HomeController extends Controller {
-
-	private HttpExecutionContext ec;
-
-	private Map<String,Integer> wordMap = new HashMap<>();
-
-	private AsyncCacheApi cache;
 	
 	private TweetService tweetService;
 	
+	private Cache cache;
+	
+	private Map<String,Integer> wordMap = new HashMap<>();
+	
 
 	@Inject
-	public HomeController(HttpExecutionContext ec,AsyncCacheApi cache) {
-		this.ec = ec;
-		this.cache = cache;	
-		tweetService = new TweetService();
+	public HomeController(TweetService tweetService,Cache cache) {
+		this.tweetService = tweetService;
+		this.cache = cache;
 		initializeWordList();
 	}
-
+	
 	/**
-	 * This method initializes wordlist with positive and negative words for sentiment analysis.
+	 * Initializes wordlist with positive and negative words for sentiment analysis.
 	 * @author Azim Surani
 	 */
 	private void initializeWordList() {
@@ -84,6 +80,11 @@ public class HomeController extends Controller {
 		}
 
 	}
+	
+	public Map<String,Integer> getWordMap() {
+		return this.wordMap;
+	}
+	
 
 	/**
 	 * An action that renders an HTML page with a welcome message.
@@ -97,45 +98,46 @@ public class HomeController extends Controller {
 	}
 
 	/**
-	 * This method returns the latest 10 tweets containg the provided search keyword
+	 * Returns the latest 10 tweets containing the provided search keyword
 	 * @param keyword
-	 * @return CompletionStage<Result>
-	 * @author Everyone
+	 * @return 10 latest tweets corresponding to the search term
+	 * @author HGG02
 	 */
 	public CompletionStage<Result> getTweetsBySearch(final String keyword){
 
 		CompletionStage<List<Tweet>> cachedTweets = cache.getOrElseUpdate(keyword.toLowerCase(),
-				() -> tweetService.searchForKeywordAndGetTweets(keyword),
-				60*15); //Stores tweets in cache for 15 mins expiration time
+				()-> tweetService.searchForKeywordAndGetTweets(keyword)
+				); //Stores tweets in cache
 
 		return cachedTweets.thenComposeAsync(tweets->
-
+		
 				// This method return the final response containing TweetSearchResultObject
-				tweetService.getSentimentForTweets(tweets,keyword,wordMap)
+			 	tweetService.getSentimentForTweets(tweets,keyword,wordMap)
 
 				).thenApplyAsync(response-> {
 
-					// Coversion of final TweetSearchResultObject object into JSON format
+					// Conversion of final TweetSearchResultObject object into JSON format
 					JsonNode jsonObject = Json.toJson(response);
 
 					return ok(Util.createResponse(jsonObject, true));
 
-				},ec.current());
+				});
 
 	}
 
 	/**
 	 * Returns word level statistics for the tweets corresponding to the
-	 * inputed search term
+	 * entered search term
 	 * 
 	 * @param keyword
-	 * @return CompletionStage<Result>
+	 * @return Statistics of the word frequency in descending order
 	 * @author Pavit Srivatsan
 	 */
 	public CompletionStage<Result> getStatisticsForSearchTerm(final String keyword) {
 
 		CompletionStage<List<Tweet>> cachedTweets = cache.getOrElseUpdate(keyword.toLowerCase(),
-				() -> tweetService.searchForKeywordAndGetTweets(keyword), 60 * 15);
+				()-> tweetService.searchForKeywordAndGetTweets(keyword)); //Stores tweets in cache
+		
 		return cachedTweets.thenComposeAsync(tweets ->
 		
 				// This method return the final response containing TweetSearchResultObject
@@ -143,38 +145,49 @@ public class HomeController extends Controller {
 
 				).thenApplyAsync(response -> {
 
-					// Coversion of final TweetSearchResultObject object into JSON format
+					// Conversion of final TweetSearchResultObject object into JSON format
 					JsonNode jsonObject = Json.toJson(response);
 
 					return ok(Util.createResponse(jsonObject, true));
 
-				}, ec.current());
+				});
 
 	}
+	/**
+	 * Displays the respective user profile with its 10 recent tweets 
+	 * in a new Webpage
+	 * by clicking on any username from the tweets on main search page.
+	 * 
+	 * @param userName
+	 * @return User Profile including username and its 10 latest tweets 
+	 * @author Rimal Juneja
+	 */
 
-	public CompletionStage<Result> getUserTimeline(final String userId) {
+	public CompletionStage<Result> getUserTimeline(final String userName) {
 
-		return ProfileService.getUserTimelineeByID(userId).thenApplyAsync((userTweets)->{
+		return ProfileService.getUserTimelineByID(userName).thenApplyAsync((userTweets)->{
+			
 
-			UserTimelineResult response = new UserTimelineResult(userId, userTweets.subList(0, userTweets.size() < 10 ? userTweets.size() : 10));
+			UserTimelineResult response = new UserTimelineResult(userName, userTweets.subList
+					(0, userTweets.size() < 10 ? userTweets.size() : 10));
 
 			JsonNode jsonObject = Json.toJson(response);
+			
 
 			return ok(Util.createResponse(jsonObject, true));
-		},ec.current());
+		});
 	}
 	
 	/**
-	 * This method returns the latest 10 Tweets containg the provided search hastag
-	 * @param hastag
-	 * @return CompletionStage<Result>
+	 * Returns latest 10 tweets as per the provided search hashtag
+	 * @param hashtag
+	 * @return 10 tweets with the corresponding hashtag
 	 * @author Aayush Khandelwal
 	 */
 	public CompletionStage<Result> getTweetByHashtag(final String hashtag){
 		
 		CompletionStage<List<Tweet>> cachedTweets = cache.getOrElseUpdate(hashtag.toLowerCase(),
-				() -> tweetService.searchForKeywordAndGetTweets("#"+hashtag),
-				60*15); //Stores tweets in cache for 15 mins expiration time
+				()-> tweetService.searchForKeywordAndGetTweets(hashtag)); //Stores tweets in cache
 
 		return  cachedTweets.thenComposeAsync(tweets->
 
@@ -183,17 +196,13 @@ public class HomeController extends Controller {
 
 				).thenApplyAsync(response-> {
 
-					// Coversion of final TweetHashtagSearchResultObject object into JSON format
+					// Conversion of final TweetHashtagSearchResultObject object into JSON format
 					JsonNode jsonObject = Json.toJson(response);
 
 					return ok(Util.createResponse(jsonObject, true));
 
-				},ec.current());
+				});
 
 	}
-	
-	
-
-
 
 }
