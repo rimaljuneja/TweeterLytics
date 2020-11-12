@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.stream.Stream;
 
 /**
+ * This service class uses the Twitter API to fetch the tweets and related information.
  * @author HGG02
  *
  */
@@ -43,7 +44,7 @@ public class TweetService {
 
 	/**
 	 * @param keyword
-	 * @return
+	 * @return List of Tweets
 	 */
 	public CompletionStage<List<Tweet>> searchForKeywordAndGetTweets(final String keyword){
 		
@@ -86,7 +87,7 @@ public class TweetService {
 	}
 	
 	/**
-	 * It calculates the average sentiment of tweets passed.
+	 * Calculates the average sentiment of tweets.
 	 * @param tweets "List of Tweets"
 	 * @param wordMap "Word Map of postive and negative words"
 	 * @return CompletableFuture<TweetSearchResult> "Final TweetSearchResult Object including sentiment data"
@@ -139,7 +140,7 @@ public class TweetService {
 	}
 	
 	/**
-	 * Calculates word level statistics for inputed tweet lists
+	 * Calculates word level statistics for the entered search term
 	 * 
 	 * @param tweets "List of Tweets"
 	 * @author pavit.srivatsan
@@ -172,9 +173,9 @@ public class TweetService {
 	}
 	
 	/**
-	 * For getting tweet by hashtag
+	 * Returns tweets for the corresponding hashtag search
 	 * @param tweets "List of Tweets"
-	 * @param hastag
+	 * @param hashtag
 	 * @author Aayush Khandelwal
 	 */
 	

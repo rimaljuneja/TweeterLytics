@@ -1,7 +1,7 @@
 package models;
 
 /**
- * This is the model class for handling Tweet data
+ *Model class for handling Tweet data
  * 
  * @author HGG02
  * @version 1.0
@@ -16,7 +16,6 @@ public class Tweet {
 	 * Construtor to create Tweet object from API data
 	 * @param tweetText
 	 * @param userScreenName
-	 * @param userid
 	 * @author HGG02
 	 */
 	public Tweet(String tweetText, String userScreenName) {

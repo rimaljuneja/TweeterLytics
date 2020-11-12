@@ -14,6 +14,9 @@ import twitter4j.TwitterFactory;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 /**
+ * This Service class uses the Twitter API to fetch the user related information 
+ * including username and its respective tweets
+ * 
  * @author Rimal Juneja
  *
  */
@@ -37,13 +40,11 @@ public class ProfileService {
 									)).
 					collect(Collectors.toList()));
            
-            System.out.println("Showing @" + userName + "'s user timeline.");
-           for (Status status : statuses) {
-               System.out.println("@" + status.getUser().getScreenName() + " - " + status.getText());
-            }
+          
+           
         } catch (TwitterException te) {
             te.printStackTrace();
-            System.out.println("Failed to get timeline: " + te.getMessage());
+          
             System.exit(-1);
         }
 		 return searchResults;

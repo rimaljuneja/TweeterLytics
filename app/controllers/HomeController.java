@@ -54,7 +54,7 @@ public class HomeController extends Controller {
 	}
 
 	/**
-	 * This method initializes wordlist with positive and negative words for sentiment analysis.
+	 * Initializes wordlist with positive and negative words for sentiment analysis.
 	 * @author Azim Surani
 	 */
 	private void initializeWordList() {
@@ -97,9 +97,9 @@ public class HomeController extends Controller {
 	}
 
 	/**
-	 * This method returns the latest 10 tweets containing the provided search keyword
+	 * Returns the latest 10 tweets containing the provided search keyword
 	 * @param keyword
-	 * @return CompletionStage<Result>
+	 * @return 10 latest tweets corresponding to the search term
 	 * @author HGG02
 	 */
 	public CompletionStage<Result> getTweetsBySearch(final String keyword){
@@ -126,10 +126,10 @@ public class HomeController extends Controller {
 
 	/**
 	 * Returns word level statistics for the tweets corresponding to the
-	 * inputed search term
+	 * entered search term
 	 * 
 	 * @param keyword
-	 * @return CompletionStage<Result>
+	 * @return Statistics of the word frequency in descending order
 	 * @author Pavit Srivatsan
 	 */
 	public CompletionStage<Result> getStatisticsForSearchTerm(final String keyword) {
@@ -152,12 +152,12 @@ public class HomeController extends Controller {
 
 	}
 	/**
-	 * This method displays the respective user profile with its 10 recent tweets 
+	 * Displays the respective user profile with its 10 recent tweets 
 	 * in a new Webpage
 	 * by clicking on any username from the tweets on main search page.
 	 * 
 	 * @param userName
-	 * @return CompletionStage<Result>
+	 * @return User Profile including username and its 10 latest tweets 
 	 * @author Rimal Juneja
 	 */
 
@@ -177,9 +177,9 @@ public class HomeController extends Controller {
 	}
 	
 	/**
-	 * This method returns the latest 10 Tweets containing the provided search hashtag
+	 * Returns latest 10 tweets as per the provided search hashtag
 	 * @param hashtag
-	 * @return CompletionStage<Result>
+	 * @return 10 tweets with the corresponding hashtag
 	 * @author Aayush Khandelwal
 	 */
 	public CompletionStage<Result> getTweetByHashtag(final String hashtag){

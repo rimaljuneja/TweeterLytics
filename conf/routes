@@ -5,15 +5,16 @@
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
 
+#Returns 10 latest tweets for entered search term
 GET		/search/:keyword			controllers.HomeController.getTweetsBySearch(keyword:String)
 
-#Retrieving word level statistics for inputed search term
+#Retrieves word level statistics for entered search term
 GET		/statistics/:keyword			controllers.HomeController.getStatisticsForSearchTerm(keyword:String)
 
-# Fetch the User information
+#Retrieves the User information
 GET     /getUserTimeline/:userId           controllers.HomeController.getUserTimeline(userId: String)
 
-# Fetch the Tweet by hashtag
+#Returns the tweets by corresponding hashtag
 GET     /searchbyhashtag/:hashtag            controllers.HomeController.getTweetByHashtag(hashtag: String)
 
 # Map static resources from the /public folder to the /assets URL path

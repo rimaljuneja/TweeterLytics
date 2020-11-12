@@ -1,5 +1,9 @@
 package models;
 
+/**
+ *Model class for handling Tweet data
+ * @author Aayush Khandelwal 
+ */
 import java.util.List;
 
 public class TweetHashtagSearchResult {
@@ -8,7 +12,12 @@ public class TweetHashtagSearchResult {
 	
 	private List<Tweet> tweets;
 	
-
+	/**
+	 * Construtor to create Tweet hashtag object from API data
+	 * @param tweets
+	 * @param hashtag
+	 * @author Aayush Khandelwal 
+	 */
 	public TweetHashtagSearchResult(String hashtag, List<Tweet> tweets) {
 		this.hashtag = hashtag;
 		this.tweets = tweets;
