@@ -24,7 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.stream.Stream;
 
 /**
- * @author everyone
+ * @author HGG02
  *
  */
 public class TweetService {

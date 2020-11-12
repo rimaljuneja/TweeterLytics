@@ -7,17 +7,17 @@ import play.libs.Json;
 /**
  * Contains utility methods which will be common to whole application
  *
- * @author Everyone
+ * @author HGG02
  * @version 1.0.0
  */
 public class Util {
 	
 	/**
-	 * It helps to create JSON Response from sepcified object
+	 * It helps to create JSON Response from specified object
 	 * @param response 
 	 * @param success
 	 * @return ObjectNode 
-	 * @author Everyone
+	 * @author HGG02
 	 */
 	public static ObjectNode createResponse(Object response, boolean success) {
 		

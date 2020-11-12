@@ -97,10 +97,10 @@ public class HomeController extends Controller {
 	}
 
 	/**
-	 * This method returns the latest 10 tweets containg the provided search keyword
+	 * This method returns the latest 10 tweets containing the provided search keyword
 	 * @param keyword
 	 * @return CompletionStage<Result>
-	 * @author Everyone
+	 * @author HGG02
 	 */
 	public CompletionStage<Result> getTweetsBySearch(final String keyword){
 
@@ -115,7 +115,7 @@ public class HomeController extends Controller {
 
 				).thenApplyAsync(response-> {
 
-					// Coversion of final TweetSearchResultObject object into JSON format
+					// Conversion of final TweetSearchResultObject object into JSON format
 					JsonNode jsonObject = Json.toJson(response);
 
 					return ok(Util.createResponse(jsonObject, true));
@@ -143,7 +143,7 @@ public class HomeController extends Controller {
 
 				).thenApplyAsync(response -> {
 
-					// Coversion of final TweetSearchResultObject object into JSON format
+					// Conversion of final TweetSearchResultObject object into JSON format
 					JsonNode jsonObject = Json.toJson(response);
 
 					return ok(Util.createResponse(jsonObject, true));
@@ -151,22 +151,34 @@ public class HomeController extends Controller {
 				}, ec.current());
 
 	}
+	/**
+	 * This method displays the respective user profile with its 10 recent tweets 
+	 * in a new Webpage
+	 * by clicking on any username from the tweets on main search page.
+	 * 
+	 * @param userName
+	 * @return CompletionStage<Result>
+	 * @author Rimal Juneja
+	 */
 
-	public CompletionStage<Result> getUserTimeline(final String userId) {
+	public CompletionStage<Result> getUserTimeline(final String userName) {
 
-		return ProfileService.getUserTimelineeByID(userId).thenApplyAsync((userTweets)->{
+		return ProfileService.getUserTimelineByID(userName).thenApplyAsync((userTweets)->{
+			
 
-			UserTimelineResult response = new UserTimelineResult(userId, userTweets.subList(0, userTweets.size() < 10 ? userTweets.size() : 10));
+			UserTimelineResult response = new UserTimelineResult(userName, userTweets.subList
+					(0, userTweets.size() < 10 ? userTweets.size() : 10));
 
 			JsonNode jsonObject = Json.toJson(response);
+			
 
 			return ok(Util.createResponse(jsonObject, true));
 		},ec.current());
 	}
 	
 	/**
-	 * This method returns the latest 10 Tweets containg the provided search hastag
-	 * @param hastag
+	 * This method returns the latest 10 Tweets containing the provided search hashtag
+	 * @param hashtag
 	 * @return CompletionStage<Result>
 	 * @author Aayush Khandelwal
 	 */
@@ -183,7 +195,7 @@ public class HomeController extends Controller {
 
 				).thenApplyAsync(response-> {
 
-					// Coversion of final TweetHashtagSearchResultObject object into JSON format
+					// Conversion of final TweetHashtagSearchResultObject object into JSON format
 					JsonNode jsonObject = Json.toJson(response);
 
 					return ok(Util.createResponse(jsonObject, true));
