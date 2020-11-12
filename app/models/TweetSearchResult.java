@@ -1,4 +1,8 @@
 package models;
+/**
+ * Model class for Twitter word Sentiment
+ * @author Azim Surani 
+ */
 
 import java.util.List;
 
@@ -9,6 +13,14 @@ public class TweetSearchResult {
 	private List<Tweet> tweets;
 	
 	private String sentiment;
+	
+	/**
+	 * Construtor to create Tweet sentiment object from API data
+	 * @param keyword
+	 * @param tweets
+	 * @param sentiment
+	 * @author Azim Surani 
+	 */
 
 	public TweetSearchResult(String keyword, List<Tweet> tweets, String sentiment) {
 		this.keyword = keyword;

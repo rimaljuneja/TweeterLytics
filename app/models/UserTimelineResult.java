@@ -1,24 +1,34 @@
 package models;
+/**
+ *Model class for handling User Profile
+ * @author Rimal Juneja 
+ */
 
 import java.util.List;
 
 public class UserTimelineResult {
 	
-	private String userId;
+	private String userName;
 	
 	private List<Tweet> tweets;
 
-	public UserTimelineResult(String userId, List<Tweet> tweets) {
-		this.userId = userId;
+	/**
+	 * Construtor to create User Profile object from API data
+	 * @param userName
+	 * @param tweets
+	 * @author Rimal Juneja
+	 */
+	public UserTimelineResult(String userName, List<Tweet> tweets) {
+		this.userName = userName;
 		this.tweets = tweets;
 	}
 
-	public String getUserId() {
-		return userId;
+	public String getuserName() {
+		return userName;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setuserName(String userName) {
+		this.userName = userName;
 	}
 
 	public List<Tweet> getTweets() {

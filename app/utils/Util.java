@@ -5,19 +5,19 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import play.libs.Json;
 
 /**
- * Contains utility methods which will be common to whole application
+ * Contains utility methods which is common for entire application
  *
- * @author Everyone
+ * @author HGG02
  * @version 1.0.0
  */
 public class Util {
 	
 	/**
-	 * It helps to create JSON Response from sepcified object
+	 * Generates JSON Response from this specified object
 	 * @param response 
 	 * @param success
-	 * @return ObjectNode 
-	 * @author Everyone
+	 * @return JSON Object Response 
+	 * @author HGG02
 	 */
 	public static ObjectNode createResponse(Object response, boolean success) {
 		
