@@ -147,34 +147,32 @@ jQuery.ajax({
             contentType: 'application/json; charset=utf-8',
             
             success: function(resultData) {
-            debugger;
             result = JSON.parse(JSON.stringify(resultData));
-            
             var UserDetails = result.data.tweets;
-            /*userTimeline+=`<head>
+            userTimeline+=`<head>
             <title>User Profile</title>
 			<style>
-			table,  td {
-			  border: 1px solid black;
-			  border-collapse: collapse;
-			  width: 60%;
-			  text-align: center
-			}
-			
-			table{
-			  margin-left: auto; 
-			  margin-right: auto;
+			table {
+			text-align: center;
 			}
 			caption {
 				padding-bottom: 20px;
 				text-decoration: underline;
 			}
+			.center {
+			text-align: center;
+			}
 			</style>
-			</head>`*/
+					<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+					<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+			</head>`
 			var tweetcount = 1;
-			
+			userTimeline+=`<div class="container">
+ 				<div class="jumbotron">`
+  			userTimeline+="<h2 class=\"center\">User Profile:"+ "@" +userid + "</h2></div></div>"
+			 userTimeline+="<div class=\"row\"><div class=\"col-md-3\"></div><div class=\"col-md-6\">"
 			 userTimeline += "<table border='1'>"
-      		 userTimeline += "<caption>"+ "User Profile:" + "</caption>"
+			 userTimeline +="<caption>*Latest 10 tweets of the above user</caption>"
  				 for (x in UserDetails) {
 				   	 userTimeline += "<tr><td>" 
 				   	 + tweetcount + "." + "</td>" +
@@ -182,6 +180,7 @@ jQuery.ajax({
 				   	  tweetcount++;
 				  }
      			 userTimeline += "</table>";
+     		userTimeline+="<div class=\"col-md-3\"></div></div>"
              Spinner.hide();
 			userWindow = window.open();
            	userWindow.document.write(userTimeline);
