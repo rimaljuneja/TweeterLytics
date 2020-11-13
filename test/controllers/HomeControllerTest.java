@@ -37,6 +37,8 @@ public class HomeControllerTest extends WithApplication {
 	
 	Map<String,String> mockSentiment;
 	
+	Map<String,Integer> mockstats;
+	
 	TweetService tweetService;
 	
 	HomeController homeController;
@@ -117,15 +119,34 @@ public class HomeControllerTest extends WithApplication {
     	}
     }
     
-//    @Test
-//    public void testWordStatistics() {
-//        Http.RequestBuilder request = new Http.RequestBuilder()
-//                .method(GET)
-//                .uri("/statistics/:keyword");
-//
-//        Result result = route(app, request);
-//        assertEquals(OK, result.status());
-//    }
+    @Test
+    public void testWordStatistics() {
+    	for(int i=0;i<2;i++) {
+        	
+        	
+    		for(Map.Entry<String, List<Tweet>> tweets : mockTweets.entrySet()) {
+
+
+    			when(tweetService.searchForKeywordAndGetTweets(tweets.getKey())).thenReturn(CompletableFuture.supplyAsync(()-> tweets.getValue()));		
+
+    			when(tweetService.getWordLevelStatistics(tweets.getValue())).thenCallRealMethod();
+
+    			CompletableFuture<Result> result = (CompletableFuture<Result>) homeController.getTweetsBySearch(tweets.getKey());
+    			try {
+    				Result r = result.get();
+    				assertEquals(OK, r.status());
+    			} catch (InterruptedException e) {
+
+    				e.printStackTrace();
+    			} catch (ExecutionException e) {
+
+    				e.printStackTrace();
+    			}
+
+    		}
+    		
+    	}
+    }
     
 //    @Test
 //    public void testHashtag() {
