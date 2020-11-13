@@ -30,20 +30,9 @@ public class Tweet {
 		return tweetText;
 	}
 
-	public void setTweetText(String tweetText) {
-		this.tweetText = tweetText;
-	}
-
 	public String getUserScreenName() {
 		return userScreenName;
 	}
 
-	public void setUserScreenName(String userScreenName) {
-		this.userScreenName = userScreenName;
-	}
-	
-//	public String toString() {
-//		return "new Tweet(\""+this.tweetText.replace("\n", "").replace("\"", "\\\"")+"\",\""+this.userScreenName+"\")";
-//	}
 	
 }

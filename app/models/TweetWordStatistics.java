@@ -20,13 +20,4 @@ public class TweetWordStatistics {
 		this.wordfrequency = wordfrequency;
 	}
 
-
-	public Map<String, Integer> getwordfrequency() {
-		return wordfrequency;
-	}
-
-	public void setwordfrequency(Map<String, Integer> wordfrequency) {
-		this.wordfrequency = wordfrequency;
-	}
-
 }

@@ -25,12 +25,8 @@ public class Util {
         
         result.put("isSuccessful", success);
         
-        if (response instanceof String) {
-            result.put("data", (String) response);
-        } else {
-            result.putPOJO("data", response);
+        result.putPOJO("data", response);
         	
-        }
         return result;
     }
 }
