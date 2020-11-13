@@ -22,7 +22,7 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
  */
 public class ProfileService {
 
-	public static CompletableFuture<List<Tweet>> getUserTimelineByID(String userName){
+	public   CompletableFuture<List<Tweet>> getUserTimelineByID(String userName){
 		return supplyAsync(()->{
 		List<Tweet> searchResults = new ArrayList<>();
 

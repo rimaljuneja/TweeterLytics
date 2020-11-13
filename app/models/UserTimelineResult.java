@@ -27,16 +27,11 @@ public class UserTimelineResult {
 		return userName;
 	}
 
-	public void setuserName(String userName) {
-		this.userName = userName;
-	}
 
 	public List<Tweet> getTweets() {
 		return tweets;
 	}
 
-	public void setTweets(List<Tweet> tweets) {
-		this.tweets = tweets;
-	}
+	
 
 }

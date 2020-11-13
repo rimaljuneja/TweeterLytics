@@ -32,10 +32,14 @@ import services.ProfileService;
 /**
  * This controller contains an action to handle HTTP requests
  * to the application's home page.
+ * @author HGG02
+ * @version 1.0.0
  */
 public class HomeController extends Controller {
 	
 	private TweetService tweetService;
+	
+	private ProfileService profileService;
 	
 	private Cache cache;
 	
@@ -43,11 +47,15 @@ public class HomeController extends Controller {
 	
 
 	@Inject
-	public HomeController(TweetService tweetService,Cache cache) {
+	public HomeController(TweetService tweetService,Cache cache,ProfileService profileTimelineService ) {
 		this.tweetService = tweetService;
 		this.cache = cache;
+		this.profileService = profileTimelineService;
 		initializeWordList();
 	}
+	
+	
+	
 	
 	/**
 	 * Initializes wordlist with positive and negative words for sentiment analysis.
@@ -81,6 +89,11 @@ public class HomeController extends Controller {
 
 	}
 	
+	/**
+	 * Fetch WordMap for sentiment Analysis
+	 * @return WordMap
+	 * @author Azim Surani
+	 */
 	public Map<String,Integer> getWordMap() {
 		return this.wordMap;
 	}
@@ -91,6 +104,7 @@ public class HomeController extends Controller {
 	 * The configuration in the <code>routes</code> file means that
 	 * this method will be called when the application receives a
 	 * <code>GET</code> request with a path of <code>/</code>.
+	 * @author HGG02
 	 */
 	public CompletionStage<Result> index() {
 
@@ -110,9 +124,9 @@ public class HomeController extends Controller {
 				); //Stores tweets in cache
 
 		return cachedTweets.thenComposeAsync(tweets->
-		
-				// This method return the final response containing TweetSearchResultObject
-			 	tweetService.getSentimentForTweets(tweets,keyword,wordMap)
+
+					// This method return the final response containing TweetSearchResultObject
+					tweetService.getSentimentForTweets(tweets,keyword,wordMap)
 
 				).thenApplyAsync(response-> {
 
@@ -165,7 +179,7 @@ public class HomeController extends Controller {
 
 	public CompletionStage<Result> getUserTimeline(final String userName) {
 
-		return ProfileService.getUserTimelineByID(userName).thenApplyAsync((userTweets)->{
+		return profileService.getUserTimelineByID(userName).thenApplyAsync((userTweets)->{
 			
 
 			UserTimelineResult response = new UserTimelineResult(userName, userTweets.subList

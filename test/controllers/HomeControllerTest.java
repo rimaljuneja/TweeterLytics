@@ -12,6 +12,7 @@ import play.inject.guice.GuiceApplicationBuilder;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.test.WithApplication;
+import services.ProfileService;
 import services.TweetService;
 import utils.Cache;
 
@@ -37,11 +38,20 @@ public class HomeControllerTest extends WithApplication {
 	
 	Map<String,String> mockSentiment;
 	
+	Map<String,Integer> mockstats;
+	
 	TweetService tweetService;
+	
+	ProfileService profileTimelineService;
 	
 	HomeController homeController;
 	
+	HomeController homeProfileController;
+	
 	Cache cache;
+	
+	Map<String,List<Tweet>> timelineMockTweets;
+
 	
 	@Before
 	public void initAll() {
@@ -49,8 +59,10 @@ public class HomeControllerTest extends WithApplication {
 		cache = new Cache();
 		
 		tweetService = Mockito.mock(TweetService.class);
+		profileTimelineService = Mockito.mock(ProfileService.class);
 		
-		homeController = new HomeController(tweetService,cache);
+		homeController = new HomeController(tweetService,cache,profileTimelineService );
+		
 		
 		mockTweets = new HashMap<>();
 		mockSentiment = new HashMap<>();
@@ -70,10 +82,64 @@ public class HomeControllerTest extends WithApplication {
 						)));
 		mockSentiment.put("Canada Economy", "neutral");
 		
-		
-		
-		
-	}
+		timelineMockTweets = new HashMap<>();
+
+		timelineMockTweets.put("Rimal",new ArrayList<> (Arrays.asList
+				        (new Tweet("I am happy that audience is appreciating good content on OTT and are looking beyond "
+						+ "?hot? scenes ? @jaysoni25Follow Us on @iwmbuzz @krishnavbha tt@TheRealPriya#JaySoni "
+						+ "#KrishnaBhatt #mustread #PriyaBanerjee #Twisted3https://t.co/l6J10HjRJ4","iwmbuzz"),
+						new Tweet("@James33172570 Hey sister James, it doesn't matter, I am happy for you got a shiny ??????","shinybaobao"),
+						new Tweet("a follow has been sent to you, eonni ? anyway i am a flover and i am happy when you're comeback hehehe https://t.co/fuY30ph0f4",
+								"kwcnjian"),
+						new Tweet("I am happy!#affirmations #leadership #leadershipdevelopment #management #managementdevelopment #leadershipcoaching "
+								+ "#managementcoaching #balance dlife #worklifebalance #lifecoaching https://t.co/6rBtlLa5T4","CoachingforInsp"), 
+						
+						new Tweet("Thogh I don't watch his channel because of too much level of noise pollution over there yet I am happy to see the"
+								+ " SC granting him the bail.#IDo ntSupportRepublic","GaneshJsmith"),
+						new Tweet("On this Veterans Day 2020, I am happy to announce the availability of my new book!Conducting performance-based"
+								+ " Instructional Analysishttps://t. co/NvgcqUBZbk https://t.co/YDoA4vkNtl","guywwallace"), 
+						new Tweet("@OfficialMonstaX .My life we ??love you I want to give you happiness every day, you are the most beautiful person"
+								+ " in my heart and I am happy wh en you are happy #LoveKilla2ndWin #MONSTAX@OfficialMonstaX","Andyymonbebe"),
+						new Tweet("@nessahatake21 I AM SO GLAD YOU LIKE HIM SJDJSJ I am happy when other people love Renji too!! ????????? I?ve been a "
+								+ "Renji fan (and simp) for ye ars already ????","AliceLaiho"), 
+						new Tweet("The only person I compete against is my past self. Have I managed better than yesterday. If the answer is yes I am happy."
+								,"RekaSundaram"),
+						new Tweet("Democrats couldn't figure out how on earth they could unseat Donald Trump, so they settle for British product (Rigging)"
+								+ " sold to Nigeria. But wi th this one rubbish act their journey to White House has been made more difficult. Sorry!!"
+								+ "I am happy for their are still good people.","theophiletra"),
+						new Tweet("@yumekosh ok am i supposed to be hurt or sum,,, i am happy for you??? ?","cherrykawa"),
+						new Tweet("@DoMe3908 I am happy you feel that way???","jousuke_SandW"),
+						new Tweet("I am happy. You can?t spoil my mood. I am happy. I?m about be fed as a stunt brand shipper that I am. "
+								+ "I am happy. You can?t spoil my mood. http s://t.co/pKcdt3wKgu","Nezr1"), 
+						new Tweet("@SilenceInPolish Wspania?y Genera?, strateg, Cz?owiek.I am happy to learn that another monument will be "
+								+ "erected in March in Breda. Wonderful D utchmen !","halina_moulin"),
+						new Tweet("@Domidest @norwegian76 @seanhannity I never thought I would say this, but right now I am happy that I live"
+								+ " in South Africa and not the US!","Wi ldFigg"),
+						new Tweet("I am blessedI cannot be disadvantagedI am happyI am lovedI am thankfulI am grateful","Oluwatosinoj"),
+						new Tweet("@weekend3warrior Wow. Not sure if I am happy or fearful to see that?","mja2231"))));
+						
+		timelineMockTweets.put("Azim",new ArrayList<> (Arrays.asList
+		        (new Tweet("I am happy that audience is appreciating good content on OTT and are looking beyond "
+				+ "?hot? scenes ? @jaysoni25Follow Us on @iwmbuzz @krishnavbha tt@TheRealPriya#JaySoni "
+				+ "#KrishnaBhatt #mustread #PriyaBanerjee #Twisted3https://t.co/l6J10HjRJ4","iwmbuzz"),
+				new Tweet("@James33172570 Hey sister James, it doesn't matter, I am happy for you got a shiny ??????","shinybaobao"),
+				new Tweet("a follow has been sent to you, eonni ? anyway i am a flover and i am happy when you're comeback hehehe https://t.co/fuY30ph0f4",
+						"kwcnjian"),
+				new Tweet("I am happy!#affirmations #leadership #leadershipdevelopment #management #managementdevelopment #leadershipcoaching "
+						+ "#managementcoaching #balance dlife #worklifebalance #lifecoaching https://t.co/6rBtlLa5T4","CoachingforInsp"), 
+				
+				new Tweet("Thogh I don't watch his channel because of too much level of noise pollution over there yet I am happy to see the"
+						+ " SC granting him the bail.#IDo ntSupportRepublic","GaneshJsmith"),
+				new Tweet("On this Veterans Day 2020, I am happy to announce the availability of my new book!Conducting performance-based"
+						+ " Instructional Analysishttps://t. co/NvgcqUBZbk https://t.co/YDoA4vkNtl","guywwallace"), 
+				new Tweet("@OfficialMonstaX .My life we ??love you I want to give you happiness every day, you are the most beautiful person"
+						+ " in my heart and I am happy wh en you are happy #LoveKilla2ndWin #MONSTAX@OfficialMonstaX","Andyymonbebe"),
+				new Tweet("@nessahatake21 I AM SO GLAD YOU LIKE HIM SJDJSJ I am happy when other people love Renji too!! ????????? I?ve been a "
+						+ "Renji fan (and simp) for ye ars already ????","AliceLaiho")))); 
+				
+
+}
+	
 
     @Override
     protected Application provideApplication() {
@@ -120,15 +186,67 @@ public class HomeControllerTest extends WithApplication {
     	}
     }
     
-//    @Test
-//    public void testWordStatistics() {
-//        Http.RequestBuilder request = new Http.RequestBuilder()
-//                .method(GET)
-//                .uri("/statistics/:keyword");
-//
-//        Result result = route(app, request);
-//        assertEquals(OK, result.status());
-//    }
+    @Test
+    public void testUserTimeline() {
+    	
+    	
+    	
+    	
+    		for(Map.Entry<String, List<Tweet>> tweets : timelineMockTweets.entrySet()) {
+
+
+    					
+    			when(profileTimelineService.getUserTimelineByID(tweets.getKey())).thenReturn(CompletableFuture.supplyAsync(()-> tweets.getValue()));
+    			//when(profileTimelineService.getUserTimelineByID(tweets.getKey())).thenCallRealMethod();
+    			
+    			
+
+
+    			CompletableFuture<Result> result = (CompletableFuture<Result>) homeController.getUserTimeline(tweets.getKey());
+    			try {
+    				Result r = result.get();
+    				assertEquals(OK, r.status());
+    			} catch (InterruptedException e) {
+
+    				e.printStackTrace();
+    			} catch (ExecutionException e) {
+
+    				e.printStackTrace();
+    			}
+
+    		}
+    		
+    	}
+    
+    
+    @Test
+    public void testWordStatistics() {
+    	for(int i=0;i<2;i++) {
+        	
+        	
+    		for(Map.Entry<String, List<Tweet>> tweets : mockTweets.entrySet()) {
+
+
+    			when(tweetService.searchForKeywordAndGetTweets(tweets.getKey())).thenReturn(CompletableFuture.supplyAsync(()-> tweets.getValue()));		
+
+    			when(tweetService.getWordLevelStatistics(tweets.getValue())).thenCallRealMethod();
+
+    			CompletableFuture<Result> result = (CompletableFuture<Result>) homeController.getTweetsBySearch(tweets.getKey());
+    			try {
+    				Result r = result.get();
+    				assertEquals(OK, r.status());
+    			} catch (InterruptedException e) {
+
+    				e.printStackTrace();
+    			} catch (ExecutionException e) {
+
+    				e.printStackTrace();
+    			}
+
+    		}
+    		
+    	}
+    }
     
 //    @Test
 //    public void testHashtag() {
