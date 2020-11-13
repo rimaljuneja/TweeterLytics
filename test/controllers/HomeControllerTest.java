@@ -234,7 +234,7 @@ public class HomeControllerTest extends WithApplication {
 
     			when(tweetService.getWordLevelStatistics(tweets.getValue())).thenCallRealMethod();
 
-    			CompletableFuture<Result> result = (CompletableFuture<Result>) homeController.getTweetsBySearch(tweets.getKey());
+    			CompletableFuture<Result> result = (CompletableFuture<Result>) homeController.getStatisticsForSearchTerm(tweets.getKey());
     			try {
     				Result r = result.get();
     				assertEquals(OK, r.status());
