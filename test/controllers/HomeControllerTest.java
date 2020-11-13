@@ -263,7 +263,7 @@ public class HomeControllerTest extends WithApplication {
 
     			when(tweetService.searchForKeywordAndGetTweets(tweets.getKey())).thenReturn(CompletableFuture.supplyAsync(()-> tweets.getValue()));		
 
-    			when(tweetService.getHashtagForTweets(tweets.getValue())).thenCallRealMethod();
+    			when(tweetService.getHashtagForTweets(tweets.getValue(),tweets.getKey())).thenCallRealMethod();
 
     			CompletableFuture<Result> result = (CompletableFuture<Result>) homeController.getTweetByHashtag(tweets.getKey());
     			try {
