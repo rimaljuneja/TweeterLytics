@@ -31,16 +31,8 @@ public class TweetHashtagSearchResult {
 		return hashtag;
 	}
 
-	public void setHashtag(String hashtag) {
-		this.hashtag = hashtag;
-	}
-
 	public List<Tweet> getTweets() {
 		return tweets;
-	}
-
-	public void setTweets(List<Tweet> tweets) {
-		this.tweets = tweets;
 	}
 
 }
