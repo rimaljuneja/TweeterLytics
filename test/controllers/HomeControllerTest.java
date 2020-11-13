@@ -251,14 +251,35 @@ public class HomeControllerTest extends WithApplication {
     	}
     }
     
-//    @Test
-//    public void testHashtag() {
-//        Http.RequestBuilder request = new Http.RequestBuilder()
-//                .method(GET)
-//                .uri("/searchbyhashtag/:hashtag");
-//
-//        Result result = route(app, request);
-//        assertEquals("application/json", result.contentType().get());
-//    }
+    
+    
+    @Test
+    public void testSearchByHashtag() {
+    	for(int i=0;i<2;i++) {
+        	
+        	
+    		for(Map.Entry<String, List<Tweet>> tweets : mockTweets.entrySet()) {
+
+
+    			when(tweetService.searchForKeywordAndGetTweets(tweets.getKey())).thenReturn(CompletableFuture.supplyAsync(()-> tweets.getValue()));		
+
+    			when(tweetService.getHashtagForTweets(tweets.getValue())).thenCallRealMethod();
+
+    			CompletableFuture<Result> result = (CompletableFuture<Result>) homeController.getTweetByHashtag(tweets.getKey());
+    			try {
+    				Result r = result.get();
+    				assertEquals(OK, r.status());
+    			} catch (InterruptedException e) {
+
+    				e.printStackTrace();
+    			} catch (ExecutionException e) {
+
+    				e.printStackTrace();
+    			}
+
+    		}
+    		
+    	}
+    }
 
 }
