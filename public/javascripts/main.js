@@ -5,7 +5,7 @@ Spinner();
 Spinner.hide();
 var input = document.getElementById("searchTerm");
 input.addEventListener("keyup", function(event) {
-  if (event.keyCode === 13) {
+  if (event.keyCode === 13 && count < 11) {
 	search();
 	}
 });
