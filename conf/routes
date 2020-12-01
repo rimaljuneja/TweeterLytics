@@ -8,6 +8,9 @@ GET     /                           controllers.HomeController.index
 #Returns 10 latest tweets for entered search term
 GET		/search/:keyword			controllers.HomeController.getTweetsBySearch(keyword:String)
 
+#Returns 10 latest tweets for entered search term
+GET		/getTweetsByWebSocket			controllers.HomeController.getTweetsByWebSocket()
+
 #Retrieves word level statistics for entered search term
 GET		/statistics/:keyword			controllers.HomeController.getStatisticsForSearchTerm(keyword:String)
 
