@@ -5,7 +5,7 @@ package models;
  * Model class for handling Tweet data
  * 
  * @author Aayush Khandelwal 
- * 
+ * @version 1.0.0
  */
 
 import java.util.List;
@@ -18,8 +18,8 @@ public class TweetHashtagSearchResult {
 	
 	/**
 	 * Construtor to create Tweet object from API data
-	 * @param tweetText
 	 * @param hashtag
+	 * @param tweets
 	 * @author Aayush Khandelwal 
 	 */
 	public TweetHashtagSearchResult(String hashtag, List<Tweet> tweets) {
