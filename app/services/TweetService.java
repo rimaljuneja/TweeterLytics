@@ -94,7 +94,7 @@ public class TweetService {
 	 * Calculates the average sentiment of tweets.
 	 * @param tweets "List of Tweets"
 	 * @param wordMap "Word Map of postive and negative words"
-	 * @return CompletableFuture<TweetSearchResult> "Final TweetSearchResult Object including sentiment data"
+	 * @return CompletableFuture "Final TweetSearchResult Object including sentiment data"
 	 * @author Azim Surani
 	 */
 	public CompletableFuture<TweetSearchResult>  getSentimentForTweets(final List<Tweet> tweets,final String keyword,final Map<String,Integer> wordMap) {
@@ -109,8 +109,10 @@ public class TweetService {
 				//seperate all words
 				String[] words = tweetText.trim().split("\\s+");
 
-				//Rrelative tweet sentiment (E.g 2 positive words and 1 negative word then o/p would be 2-1=1... overall positive )
-				Integer sentiment = Arrays.stream(words).map((String word) -> wordMap.getOrDefault(word.toLowerCase() , 0)).reduce(0,(a,b)-> a+b);
+				//Relative tweet sentiment (E.g 2 positive words and 1 neutral word then o/p would be 2-0=2... overall positive )
+				Integer sentiment = Arrays.stream(words).
+									map((String word) -> wordMap.getOrDefault(word.toLowerCase() , 0)).
+									reduce(0,(a,b)-> a+b);
 
 				if(sentiment>0)
 					return "1";
