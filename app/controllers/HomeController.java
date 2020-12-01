@@ -8,9 +8,14 @@ import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import actors.TimeActor;
+import actors.UserSearchActor;
+import akka.actor.ActorSystem;
+import akka.stream.Materializer;
 import models.Tweet;
 
 import play.libs.Json;
+import play.libs.streams.ActorFlow;
 import play.mvc.*;
 import services.TweetService;
 import utils.Cache;
@@ -45,17 +50,21 @@ public class HomeController extends Controller {
 	
 	private Map<String,Integer> wordMap = new HashMap<>();
 	
+	private ActorSystem actorSystem;
+
+	@Inject 
+	private Materializer materializer;
+	
 
 	@Inject
-	public HomeController(TweetService tweetService,Cache cache,ProfileService profileTimelineService ) {
+	public HomeController(TweetService tweetService,Cache cache,ProfileService profileTimelineService,ActorSystem actorSystem ) {
 		this.tweetService = tweetService;
 		this.cache = cache;
 		this.profileService = profileTimelineService;
+		this.actorSystem = actorSystem;
 		initializeWordList();
+		actorSystem.actorOf(TimeActor.getProps(), "timeActor");
 	}
-	
-	
-	
 	
 	/**
 	 * Initializes wordlist with positive and negative words for sentiment analysis.
@@ -109,6 +118,7 @@ public class HomeController extends Controller {
 	public CompletionStage<Result> index() {
 
 		return CompletableFuture.supplyAsync(()->ok(views.html.index.render()));
+		
 	}
 
 	/**
@@ -138,7 +148,18 @@ public class HomeController extends Controller {
 				});
 
 	}
+	
+	/**
+	 * Creates websocket connection for main search page
+	 * @return WebSocket
+	 */
+	public WebSocket getTweetsBySearchViaWebSocket() {
 
+		return WebSocket.Json.accept(request -> ActorFlow.actorRef(ws -> 
+								UserSearchActor.props(ws, tweetService, wordMap), actorSystem, materializer));
+
+	}
+	
 	/**
 	 * Returns word level statistics for the tweets corresponding to the
 	 * entered search term
