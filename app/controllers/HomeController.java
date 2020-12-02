@@ -152,6 +152,7 @@ public class HomeController extends Controller {
 	/**
 	 * Creates websocket connection for main search page
 	 * @return WebSocket
+	 * @author HGG02
 	 */
 	public WebSocket getTweetsBySearchViaWebSocket() {
 
