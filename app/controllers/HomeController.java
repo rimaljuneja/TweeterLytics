@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import actors.TimeActor;
 import actors.UserSearchActor;
+import actors.UserSearchHashtagActor;
 import akka.actor.ActorSystem;
 import akka.stream.Materializer;
 import models.Tweet;
@@ -152,12 +153,22 @@ public class HomeController extends Controller {
 	/**
 	 * Creates websocket connection for main search page
 	 * @return WebSocket
-	 * @author HGG02
 	 */
 	public WebSocket getTweetsBySearchViaWebSocket() {
 
 		return WebSocket.Json.accept(request -> ActorFlow.actorRef(ws -> 
 								UserSearchActor.props(ws, tweetService, wordMap), actorSystem, materializer));
+
+	}
+	
+	/**
+	 * Creates websocket connection for hashtag search page
+	 * @return WebSocket
+	 */
+	public WebSocket getTweetsByHashtagViaWebSocket() {
+
+		return WebSocket.Json.accept(request -> ActorFlow.actorRef(ws -> 
+								UserSearchHashtagActor.props(ws, tweetService), actorSystem, materializer));
 
 	}
 	
