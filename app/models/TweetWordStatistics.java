@@ -3,7 +3,7 @@ package models;
  * Model class for Twitter word Statistics
  * @author Pavit Srivatsan
  */
-import java.util.List;
+
 import java.util.Map;
 
 public class TweetWordStatistics {
