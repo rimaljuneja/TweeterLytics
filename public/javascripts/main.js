@@ -2,7 +2,7 @@ let txt = "";
 let finaltext = "";
 let count = 1;
 Spinner();
-Spinner.hide();
+Spinner.show();
 var input = document.getElementById("searchTerm");
 input.addEventListener("keyup", function(event) {
 	if (event.keyCode === 13 && count < 11) {
@@ -48,6 +48,7 @@ function searchDisplay(resultData, searchkey) {
 	} else {
 		document.getElementById(searchkey).innerHTML = txt;
 		txt = "";
+		count--;
 		Spinner.hide();
 	}
 }
@@ -103,6 +104,7 @@ function DisplayHashTagResult(resultData, hashtag) {
 	} else {
 		document.getElementById(hashtag).innerHTML = txt;
 		txt = "";
+		count--;
 		Spinner.hide();
 	}
 }
@@ -248,26 +250,29 @@ function wordStats(keyterm) {
 
 }
 
+let searchSocket = new WebSocket("ws://localhost:9000/getTweetsBySearchViaWebSocket");
+	searchSocket.onopen = function(e) {
+		//searchSocket.send(msg);
+		Spinner.hide();
+	};
 //Web Socket implemnetation for searching keyword
 function search() {
 	var searchkey = document.getElementById("searchTerm").value;
+	//let searchSocket = new WebSocket("ws://localhost:9000/getTweetsBySearchViaWebSocket");
 	Spinner.show();
-	let socket = new WebSocket("ws://localhost:9000/getTweetsBySearchViaWebSocket");
+
 	let message = {
 		"keyword": searchkey
 	};
 	let msg = JSON.stringify(message);
-	socket.onopen = function(e) {
-		socket.send(msg);
-	};
-
-	socket.onmessage = function(event) {
+	searchSocket.send(msg);
+	searchSocket.onmessage = function(event) {
 		var response = event.data;
 		searchDisplay(response, searchkey);
 		Spinner.hide();
 	}
 
-	socket.onclose = function(event) {
+	searchSocket.onclose = function(event) {
 		if (event.wasClean) {
 			alert(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
 		} else {
@@ -275,7 +280,7 @@ function search() {
 		}
 	};
 
-	socket.onerror = function(error) {
+	searchSocket.onerror = function(error) {
 		Spinner.hide();
 		alert(`[error] ${error.message}`);
 	};

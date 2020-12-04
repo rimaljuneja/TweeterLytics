@@ -150,6 +150,8 @@ package actors;
 		 */
 		private void sendUpdatedData() {
 			
+			System.out.println("Called");
+			
 			searchHistory.keySet().parallelStream()
 			.forEach(keyword -> {
 				
@@ -158,32 +160,18 @@ package actors;
 				.thenAcceptAsync(tweets->
 				{
 					
-					// The recent old tweet data - It will help to remove duplicate tweets already served.
-					final String recentOldTweet = searchHistory.get(keyword).getTweets().get(0).getTweetText();
-					
-					//Check if first tweet of old and new data is not same
-					if(!tweets.get(0).getTweetText().equals(recentOldTweet)) {
+
 						
 						//get sentiment of new tweets
 						tweetService.getWordLevelStatistics(tweets)
 						.thenAcceptAsync(response -> {
 						
-							int countOfNewTweets = 0;
 							
-							// Count how many tweets are actually new
-							for(Tweet newTweet : response.getTweets()) {
-								if(newTweet.getTweetText().equals(recentOldTweet))
-									break;
-								countOfNewTweets++;
-							}
 							
 							// Replace new data in searchHistory
-							searchHistory.replace(keyword,(TweetWordStatistics)response.clone());
+							searchHistory.replace(keyword,response);
 							
-							// Keep only new tweets
-							response.setTweets(response.getTweets().subList(0,countOfNewTweets));
 							
-							// Flag to identify that new data was sent
 							response.setIsNewData(true);
 							
 							// Conversion of final TweetSearchResultObject object into JSON format
@@ -194,7 +182,7 @@ package actors;
 							
 						});
 
-					}
+					
 
 				});
 			});
