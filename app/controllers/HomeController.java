@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import actors.TimeActor;
 import actors.UserSearchActor;
 import actors.UserSearchHashtagActor;
+import actors.WordLevelStatsActor;
 import akka.actor.ActorSystem;
 import akka.stream.Materializer;
 import models.Tweet;
@@ -50,6 +51,8 @@ public class HomeController extends Controller {
 	private Cache cache;
 	
 	private Map<String,Integer> wordMap = new HashMap<>();
+	
+	private final Map<String, Integer> wordfrequency = new HashMap<>();;
 	
 	private ActorSystem actorSystem;
 
@@ -169,6 +172,17 @@ public class HomeController extends Controller {
 
 		return WebSocket.Json.accept(request -> ActorFlow.actorRef(ws -> 
 								UserSearchHashtagActor.props(ws, tweetService), actorSystem, materializer));
+
+	}
+	
+	/**
+	 * Creates websocket connection for word level statistics for search terms
+	 * @return WebSocket
+	 */
+	public WebSocket getTweetStatisticsViaWebSocket() {
+
+		return WebSocket.Json.accept(request -> ActorFlow.actorRef(ws -> 
+								WordLevelStatsActor.props(ws, tweetService, wordfrequency), actorSystem, materializer));
 
 	}
 	
