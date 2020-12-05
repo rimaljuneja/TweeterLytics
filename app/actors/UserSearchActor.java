@@ -4,6 +4,7 @@ import models.Tweet;
 import models.TweetSearchResult;
 import play.libs.Json;
 import services.TweetService;
+import services.TwitterApi;
 import utils.Util;
 
 import java.util.HashMap;
@@ -33,17 +34,21 @@ public class UserSearchActor extends AbstractActor{
 	
 	private final TweetService tweetService;
 	
+	private final TwitterApi twitterApi;
+	
 	private final Map<String,Integer> wordMap;
-
-    /**
-     * Constructor to create instance of this actor.
-     * @param webSocket
-     * @param tweetService
-     * @param wordMap
-     * @author Azim Surani
-     */
-    public UserSearchActor(final ActorRef webSocket,final TweetService tweetService,final Map<String,Integer> wordMap) {
+	
+	/**
+	 * Constructor to create instance of this actor.
+	 * @param webSocket
+	 * @param twitterApi
+	 * @param tweetService
+	 * @param wordMap
+	 * @author Azim Surani
+	 */
+    public UserSearchActor(final ActorRef webSocket,final TwitterApi twitterApi,final TweetService tweetService,final Map<String,Integer> wordMap) {
     	this.webSocket =  webSocket;
+    	this.twitterApi = twitterApi;
     	this.tweetService = tweetService;
     	this.wordMap = wordMap;
     }
@@ -51,13 +56,15 @@ public class UserSearchActor extends AbstractActor{
     /**
      * Factory method to create instance of User Search Actor
      * @param webSocket
+     * @param twitterApi
      * @param tweetService
      * @param wordMap
      * @return Props
      * @author Azim Surani
+     * @param twitterApi 
      */
-    public static Props props(final ActorRef webSocket,final TweetService tweetService,final Map<String,Integer> wordMap) {
-        return Props.create(UserSearchActor.class, webSocket,tweetService,wordMap);
+    public static Props props(final ActorRef webSocket,final TwitterApi twitterApi, final TweetService tweetService,final Map<String,Integer> wordMap) {
+        return Props.create(UserSearchActor.class,webSocket,twitterApi,tweetService,wordMap);
     }
     
     /**
@@ -79,7 +86,7 @@ public class UserSearchActor extends AbstractActor{
      */
     @Override
     public void postStop() {
-  
+    	
        	context().actorSelection("/user/timeActor/")
                  .tell(new TimeActor.DeRegisterMsg(), self());
     }
@@ -120,7 +127,7 @@ public class UserSearchActor extends AbstractActor{
 		else {
 			
 			//Get tweets via keyword passed
-			tweetService.searchForKeywordAndGetTweets(keyword)
+			twitterApi.searchForKeywordAndGetTweets(keyword)
 			
 				// Get Tweet Sentiment
 				.thenComposeAsync(tweets->	tweetService.getSentimentForTweets(tweets,keyword,wordMap))
@@ -152,7 +159,7 @@ public class UserSearchActor extends AbstractActor{
 		.forEach(keyword -> {
 			
 			//Get tweets via keyword passed
-			tweetService.searchForKeywordAndGetTweets(keyword)
+			twitterApi.searchForKeywordAndGetTweets(keyword)
 			.thenAcceptAsync(tweets->
 			{
 				
