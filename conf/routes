@@ -6,13 +6,13 @@
 GET     /                           controllers.HomeController.index
 
 #Returns 10 latest tweets for entered search term
-GET		/search/:keyword			controllers.HomeController.getTweetsBySearch(keyword:String)
+#GET		/search/:keyword			controllers.HomeController.getTweetsBySearch(keyword:String)
 
 #Returns websocket connection for searching tweets by keyword
 GET		/getTweetsBySearchViaWebSocket			controllers.HomeController.getTweetsBySearchViaWebSocket()
 
 #Retrieves word level statistics for entered search term
-GET		/statistics/:keyword			controllers.HomeController.getStatisticsForSearchTerm(keyword:String)
+#GET		/statistics/:keyword			controllers.HomeController.getStatisticsForSearchTerm(keyword:String)
 
 #Returns word level statistics for the search term through web sockets
 GET		/getTweetStatisticsViaWebSocket			controllers.HomeController.getTweetStatisticsViaWebSocket()
@@ -21,7 +21,7 @@ GET		/getTweetStatisticsViaWebSocket			controllers.HomeController.getTweetStatis
 GET     /getUserTimeline/:userId           controllers.HomeController.getUserTimeline(userId: String)
 
 #Returns the tweets by corresponding hashtag
-GET     /searchbyhashtag/:hashtag            controllers.HomeController.getTweetByHashtag(hashtag: String)
+#GET     /searchbyhashtag/:hashtag            controllers.HomeController.getTweetByHashtag(hashtag: String)
 
 #Returns websocket connection for searching tweets by hashtag
 GET		/getTweetsByHashtagViaWebSocket			controllers.HomeController.getTweetsByHashtagViaWebSocket()
