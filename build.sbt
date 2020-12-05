@@ -16,6 +16,10 @@ libraryDependencies ++= Seq(
   "org.mockito" % "mockito-core" % "3.6.0"
 )
 
+val AkkaVersion = "2.6.5"
+
+libraryDependencies += "com.typesafe.akka" %% "akka-testkit" % AkkaVersion % Test
+
 // Compile the project before generating Eclipse files, so
 // that generated .scala or .class files for views and routes are present
 
