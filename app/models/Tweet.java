@@ -25,6 +25,16 @@ public class Tweet {
 		this.userScreenName = userScreenName;
 
 	}
+	
+	@Override
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			return new Tweet(this.tweetText, this.userScreenName);
+		}
+	}
+
 
 	public String getTweetText() {
 		return tweetText;
