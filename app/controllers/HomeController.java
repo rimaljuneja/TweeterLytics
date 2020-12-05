@@ -14,13 +14,12 @@ import actors.UserSearchHashtagActor;
 import actors.WordLevelStatsActor;
 import akka.actor.ActorSystem;
 import akka.stream.Materializer;
-import models.Tweet;
 
 import play.libs.Json;
 import play.libs.streams.ActorFlow;
 import play.mvc.*;
 import services.TweetService;
-import utils.Cache;
+import services.TwitterApi;
 import utils.Util;
 
 import java.io.IOException;
@@ -28,7 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import models.UserTimelineResult;
@@ -48,8 +46,6 @@ public class HomeController extends Controller {
 	
 	private ProfileService profileService;
 	
-	private Cache cache;
-	
 	private Map<String,Integer> wordMap = new HashMap<>();
 	
 	private final Map<String, Integer> wordfrequency = new HashMap<>();;
@@ -59,15 +55,22 @@ public class HomeController extends Controller {
 	@Inject 
 	private Materializer materializer;
 	
+	@Inject 
+	private TwitterApi twitterApi;
+	
 
 	@Inject
-	public HomeController(TweetService tweetService,Cache cache,ProfileService profileTimelineService,ActorSystem actorSystem ) {
+	public HomeController(TweetService tweetService,ProfileService profileTimelineService,ActorSystem actorSystem ) {
+		
 		this.tweetService = tweetService;
-		this.cache = cache;
+		
 		this.profileService = profileTimelineService;
+		
 		this.actorSystem = actorSystem;
+		
 		initializeWordList();
-		actorSystem.actorOf(TimeActor.getProps(), "timeActor");
+		
+		actorSystem.actorOf(TimeActor.props(), "timeActor");
 	}
 	
 	/**
@@ -131,7 +134,7 @@ public class HomeController extends Controller {
 	 * @return 10 latest tweets corresponding to the search term
 	 * @author HGG02
 	 */
-	public CompletionStage<Result> getTweetsBySearch(final String keyword){
+	/*public CompletionStage<Result> getTweetsBySearch(final String keyword){
 
 		CompletionStage<List<Tweet>> cachedTweets = cache.getOrElseUpdate(keyword.toLowerCase(),
 				()-> tweetService.searchForKeywordAndGetTweets(keyword)
@@ -151,16 +154,17 @@ public class HomeController extends Controller {
 
 				});
 
-	}
+	}*/
 	
 	/**
 	 * Creates websocket connection for main search page
 	 * @return WebSocket
+	 * @author HGG02
 	 */
 	public WebSocket getTweetsBySearchViaWebSocket() {
 
 		return WebSocket.Json.accept(request -> ActorFlow.actorRef(ws -> 
-								UserSearchActor.props(ws, tweetService, wordMap), actorSystem, materializer));
+								UserSearchActor.props(ws,twitterApi,tweetService, wordMap), actorSystem, materializer));
 
 	}
 	
@@ -171,7 +175,7 @@ public class HomeController extends Controller {
 	public WebSocket getTweetsByHashtagViaWebSocket() {
 
 		return WebSocket.Json.accept(request -> ActorFlow.actorRef(ws -> 
-								UserSearchHashtagActor.props(ws, tweetService), actorSystem, materializer));
+								UserSearchHashtagActor.props(ws,twitterApi,tweetService), actorSystem, materializer));
 
 	}
 	
@@ -182,7 +186,7 @@ public class HomeController extends Controller {
 	public WebSocket getTweetStatisticsViaWebSocket() {
 
 		return WebSocket.Json.accept(request -> ActorFlow.actorRef(ws -> 
-								WordLevelStatsActor.props(ws, tweetService, wordfrequency), actorSystem, materializer));
+								WordLevelStatsActor.props(ws,twitterApi,tweetService, wordfrequency), actorSystem, materializer));
 
 	}
 	
@@ -194,7 +198,7 @@ public class HomeController extends Controller {
 	 * @return Statistics of the word frequency in descending order
 	 * @author Pavit Srivatsan
 	 */
-	public CompletionStage<Result> getStatisticsForSearchTerm(final String keyword) {
+	/*public CompletionStage<Result> getStatisticsForSearchTerm(final String keyword) {
 
 		CompletionStage<List<Tweet>> cachedTweets = cache.getOrElseUpdate(keyword.toLowerCase(),
 				()-> tweetService.searchForKeywordAndGetTweets(keyword)); //Stores tweets in cache
@@ -213,7 +217,8 @@ public class HomeController extends Controller {
 
 				});
 
-	}
+	}*/
+	
 	/**
 	 * Displays the respective user profile with its 10 recent tweets 
 	 * in a new Webpage
@@ -245,7 +250,7 @@ public class HomeController extends Controller {
 	 * @return 10 tweets with the corresponding hashtag
 	 * @author Aayush Khandelwal
 	 */
-	public CompletionStage<Result> getTweetByHashtag(final String hashtag){
+	/*public CompletionStage<Result> getTweetByHashtag(final String hashtag){
 		
 		CompletionStage<List<Tweet>> cachedTweets = cache.getOrElseUpdate(hashtag.toLowerCase(),
 				()-> tweetService.searchForKeywordAndGetTweets(hashtag)); //Stores tweets in cache
@@ -264,6 +269,6 @@ public class HomeController extends Controller {
 
 				});
 
-	}
+	}*/
 
 }
