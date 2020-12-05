@@ -11,7 +11,7 @@ input.addEventListener("keyup", function(event) {
 });
 
 /*function to show tweet words by search term */
-function searchDisplay(resultData, searchkey) {
+function searchDisplay(resultData) {
 	if (count < 11) {
 		count++;
 	}
@@ -23,31 +23,35 @@ function searchDisplay(resultData, searchkey) {
 	if (count === 11) {
 		document.getElementById('goButton').disabled = true;
 	}
-	var tweetcount = 1;
 	var result = (JSON.parse(resultData));
 	var tweets = result.data.tweets;
 	myObj = JSON.parse(JSON.stringify(tweets));
-	txt += "<table id=\"" + searchkey + "\" border='1'>"
-	txt += "<caption>" + "Search terms:" + "<a id=\"" + searchkey + "\"onclick=\"wordStats(\'" + searchkey + "\')\"" + ">  " + searchkey + "</a>  " +
-		processSentiment(result.data.sentiment) +
-		"</caption>"
-	for (x in myObj) {
-		txt += "<tr><td>"
-			+ tweetcount + "." + "</td>" +
-			"<td>" + "<a id=\"" + myObj[x].userScreenName + "\"onclick=\"displayUser(\'" + myObj[x].userScreenName + "\')\"" + ">" + "@" + myObj[x].userScreenName + "</a></td>" +
-			"<td>" + displayHashTags(myObj[x].tweetText) + "</td></tr>";
-		tweetcount++;
-	}
-	txt += "</table>"
 	if (result.data.isNewData === false) {
+		txt += "<table id=\"" + result.data.keyword + "\" border='1'>"
+		txt += "<caption>" + "Search terms:" + "<a id=\"" + result.data.keyword + "\"onclick=\"wordStats(\'" + result.data.keyword + "\')\"" + ">  " + result.data.keyword + "</a>  " +
+			processSentiment(result.data.sentiment) +
+			"</caption>"
+		for (x in myObj) {
+			txt += "<tr><td>" + "*" + "</td>" +
+				"<td>" + "<a id=\"" + myObj[x].userScreenName + "\"onclick=\"displayUser(\'" + myObj[x].userScreenName + "\')\"" + ">" + "@" + myObj[x].userScreenName + "</a></td>" +
+				"<td>" + displayHashTags(myObj[x].tweetText) + "</td></tr>";
+		}
+		txt += "</table>"
 		finaltext = txt + finaltext;
 		txt = "";
 		document.getElementById("demo").innerHTML = finaltext;
 		Spinner.hide();
 
 	} else {
-		document.getElementById(searchkey).innerHTML = txt;
-		txt = "";
+		for (x in myObj) {
+			txt += "<td>" + "*" + "</td>" +
+				"<td>" + "<a id=\"" + myObj[x].userScreenName + "\"onclick=\"displayUser(\'" + myObj[x].userScreenName + "\')\"" + ">" + "@" + myObj[x].userScreenName + "</a></td>" +
+				"<td>" + displayHashTags(myObj[x].tweetText) + "</td>";
+			var table = document.getElementById(result.data.keyword);
+			var row = table.insertRow(0);
+			row.innerHTML = txt
+			txt = ""
+		}
 		count--;
 		Spinner.hide();
 	}
@@ -68,42 +72,48 @@ function displayHashTags(input) {
 }
 
 //function to display hashtags
-function DisplayHashTagResult(resultData, hashtag) {
-			if (count < 11) {
-				count++;
-			}
-			else {
-				finaltext = "";
-				txt = "";
-				count = 1;
-			}
-			if (count === 11) {
-				document.getElementById('goButton').disabled = true;
-			}
-			var tweetcount = 1;
-			var result = JSON.parse(resultData);
-			var tweets = result.data.tweets;
-			myObj = JSON.parse(JSON.stringify(tweets));
-			txt += "<table id=\""+ hashtag +"\" border='1'>"
-			txt += "<caption>" + "Hashtag Result:" + hashtag
-			"</caption>"
-			for (x in myObj) {
-				txt += "<tr><td>"
-					+ tweetcount + "." + "</td>" +
-					"<td>" + "<a id=\"" + myObj[x].userScreenName + "\"onclick=\"displayUser(\'" + myObj[x].userScreenName + "\')\"" + ">" + "@" + myObj[x].userScreenName + "</a></td>" +
-					"<td>" + displayHashTags(myObj[x].tweetText) + "</td></tr>";
-				tweetcount++;
-			}
-			txt += "</table>"
+function DisplayHashTagResult(resultData) {
+	if (count < 11) {
+		count++;
+	}
+	else {
+		finaltext = "";
+		txt = "";
+		count = 1;
+	}
+	if (count === 11) {
+		document.getElementById('goButton').disabled = true;
+	}
+	var result = JSON.parse(resultData);
+	var tweets = result.data.tweets;
+	myObj = JSON.parse(JSON.stringify(tweets));
 	if (result.data.isNewData === false) {
+		txt += "<table id=\"" + result.data.hashtag + "\" border='1'>"
+		txt += "<caption>" + "Hashtag Result:" + result.data.hashtag
+		"</caption>"
+		for (x in myObj) {
+			txt += "<tr><td>" + "*" + "</td>" +
+				"<td>" + "<a id=\"" + myObj[x].userScreenName + "\"onclick=\"displayUser(\'" + myObj[x].userScreenName + "\')\"" + ">" + "@" + myObj[x].userScreenName + "</a></td>" +
+				"<td>" + displayHashTags(myObj[x].tweetText) + "</td></tr>";
+		}
+		txt += "</table>"
 		finaltext = txt + finaltext;
 		txt = "";
 		document.getElementById("demo").innerHTML = finaltext;
 		Spinner.hide();
 
 	} else {
-		document.getElementById(hashtag).innerHTML = txt;
-		txt = "";
+		txt = "------------------------"
+		for (x in myObj) {
+			txt += "<td>"
+				+ "*" + "</td>" +
+				"<td>" + "<a id=\"" + myObj[x].userScreenName + "\"onclick=\"displayUser(\'" + myObj[x].userScreenName + "\')\"" + ">" + "@" + myObj[x].userScreenName + "</a></td>" +
+				"<td>" + displayHashTags(myObj[x].tweetText) + "</td>";
+			var table = document.getElementById(result.data.hashtag);
+			var row = table.insertRow(0);
+			row.innerHTML = txt
+			txt = "";
+		}
 		count--;
 		Spinner.hide();
 	}
@@ -251,14 +261,12 @@ function wordStats(keyterm) {
 }
 
 let searchSocket = new WebSocket("ws://localhost:9000/getTweetsBySearchViaWebSocket");
-	searchSocket.onopen = function(e) {
-		//searchSocket.send(msg);
-		Spinner.hide();
-	};
+searchSocket.onopen = function(e) {
+	Spinner.hide();
+};
 //Web Socket implemnetation for searching keyword
 function search() {
 	var searchkey = document.getElementById("searchTerm").value;
-	//let searchSocket = new WebSocket("ws://localhost:9000/getTweetsBySearchViaWebSocket");
 	Spinner.show();
 
 	let message = {
@@ -268,7 +276,7 @@ function search() {
 	searchSocket.send(msg);
 	searchSocket.onmessage = function(event) {
 		var response = event.data;
-		searchDisplay(response, searchkey);
+		searchDisplay(response);
 		Spinner.hide();
 	}
 
@@ -286,25 +294,26 @@ function search() {
 	};
 }
 
+let hashTagSocket = new WebSocket("ws://localhost:9000/getTweetsByHashtagViaWebSocket");
+hashTagSocket.onopen = function(e) {
+};
+
 //Web Socket implemnetation for displaying hashtags
 function processHashTags(hashtag) {
 	Spinner.show();
-	let socket = new WebSocket("ws://localhost:9000/getTweetsByHashtagViaWebSocket");
+
 	let message = {
 		"hashtag": hashtag
 	};
 	let msg = JSON.stringify(message);
-	socket.onopen = function(e) {
-		socket.send(msg);
-	};
-
-	socket.onmessage = function(event) {
+	hashTagSocket.send(msg);
+	hashTagSocket.onmessage = function(event) {
 		var response = event.data;
-		DisplayHashTagResult(response, hashtag);
+		DisplayHashTagResult(response);
 		Spinner.hide();
 	}
 
-	socket.onclose = function(event) {
+	hashTagSocket.onclose = function(event) {
 		if (event.wasClean) {
 			alert(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
 		} else {
@@ -312,7 +321,7 @@ function processHashTags(hashtag) {
 		}
 	};
 
-	socket.onerror = function(error) {
+	hashTagSocket.onerror = function(error) {
 		Spinner.hide();
 		alert(`[error] ${error.message}`);
 	};
