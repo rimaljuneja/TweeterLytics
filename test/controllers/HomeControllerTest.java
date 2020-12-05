@@ -27,7 +27,6 @@ import services.ProfileService;
 import services.TweetService;
 import services.TwitterApi;
 import services.TwitterTest;
-import utils.Cache;
 
 
 import static play.inject.Bindings.*;
@@ -58,8 +57,6 @@ public class HomeControllerTest extends WithApplication {
 	
 	HomeController homeProfileController;
 	
-	Cache cache;
-	
 	Map<String,List<Tweet>> timelineMockTweets;
 	
 	ActorSystem system;
@@ -85,9 +82,7 @@ public class HomeControllerTest extends WithApplication {
 	
 	@Before
 	public void initAll() {
-
-		cache = new Cache();
-		
+	
 		testApi = testApp.injector().instanceOf(TwitterApi.class);
 
 		profileTimelineService = Mockito.mock(ProfileService.class);
