@@ -14,8 +14,8 @@ public class Tweet {
 
 	/**
 	 * Construtor to create Tweet object from API data
-	 * @param tweetText
-	 * @param userScreenName
+	 * @param tweetText Tweet
+	 * @param userScreenName Username
 	 * @author HGG02
 	 */
 	public Tweet(String tweetText, String userScreenName) {

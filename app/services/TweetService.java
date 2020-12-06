@@ -27,9 +27,10 @@ public class TweetService {
 	
 	/**
 	 * Calculates the average sentiment of tweets.
-	 * @param tweets "List of Tweets"
-	 * @param wordMap "Word Map of postive and negative words"
-	 * @return CompletableFuture "Final TweetSearchResult Object including sentiment data"
+	 * @param tweets List of Tweets
+	 * @param keyword Search Keyword
+	 * @param wordMap Word Map of postive and negative words
+	 * @return CompletableFuture containing Final TweetSearchResult Object including sentiment data
 	 * @author Azim Surani
 	 */
 	public CompletableFuture<TweetSearchResult>  getSentimentForTweets(final List<Tweet> tweets,final String keyword,final Map<String,Integer> wordMap) {

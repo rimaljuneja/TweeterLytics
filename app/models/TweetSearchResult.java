@@ -1,12 +1,12 @@
 package models;
-/**
- * Model class for Twitter word Sentiment
- * @author Azim Surani 
- * @version 1.0.0
- */
 
 import java.util.List;
 
+/**
+ * Model class for Tweet Search Result
+ * @author Azim Surani 
+ * @version 1.0.0
+ */
 public class TweetSearchResult {
 	
 	private String keyword;
@@ -18,10 +18,10 @@ public class TweetSearchResult {
 	private Boolean isNewData;
 	
 	/**
-	 * Construtor to create Tweet sentiment object from API data
-	 * @param keyword
-	 * @param tweets
-	 * @param sentiment
+	 * Construtor to create Tweet Search Result
+	 * @param keyword Search keyword
+	 * @param tweets List of Tweet objects
+	 * @param sentiment Final sentiment of tweets
 	 * @author Azim Surani 
 	 */
 
