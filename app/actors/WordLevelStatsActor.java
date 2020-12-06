@@ -153,9 +153,6 @@ public class WordLevelStatsActor extends AbstractActor{
 	 * @author Azim Surani
 	 */
 	private void sendUpdatedData() {
-
-		System.out.println("Called");
-
 		searchHistory.keySet().parallelStream()
 		.forEach(keyword -> {
 

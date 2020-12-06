@@ -185,8 +185,8 @@ function displayUser(userid) {
 			userTimeline += "</table>";
 			userTimeline += "<div class=\"col-md-3\"></div></div>"
 			Spinner.hide();
-			userWindow = window.open();
-			userWindow.document.write(userTimeline);
+			window[keyterm] = window.open();
+			window[keyterm].document.write(userTimeline);
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			Spinner.hide();
@@ -199,15 +199,8 @@ function displayUser(userid) {
 
 /*function to display word level statistics 
   for the search term selected */
-function wordStats(keyterm) {
-	Spinner.show();
-	statscontent = '';
-	jQuery.ajax({
-		url: "http://localhost:9000/statistics/" + keyterm,
-		type: "GET",
-		contentType: 'application/json; charset=utf-8',
-		success: function(resultData) {
-			result = JSON.parse(JSON.stringify(resultData));
+function displayWordStats(resultData,keyterm) {
+			result = JSON.parse(resultData);
 			var WordFrequency = result.data.wordfrequency;
 			var sortable = [];
 			for (var word in WordFrequency) {
@@ -217,6 +210,7 @@ function wordStats(keyterm) {
 				return a[1] - b[1];
 			});
 			sortable.reverse();
+			var statscontent = '';
 			statscontent += `
             <html>
             <head>
@@ -237,9 +231,9 @@ function wordStats(keyterm) {
 				padding-bottom: 20px;
 				text-decoration: underline;
 			}
-			</style>
-			</head>`
-			statscontent += "<body><table>"
+			</style>` 
+			statscontent +=	"<script>  const keyterm = \""+ keyterm + "\"; window.addEventListener(\"message\", (event) => { var element = document.getElementById(keyterm); element.innerHTML = event.data;} , false);</script></head>"
+			statscontent += "<body id=\""+ keyterm +"\"><table>";
 			statscontent += "<caption style='font-weight:600;font-color:black;'>" + "Word Level Statistics for search query tweet results :" + keyterm +
 				"</caption>"
 			statscontent += "<tr><th>Word</th><th>Frequency</th></tr>"
@@ -248,16 +242,8 @@ function wordStats(keyterm) {
 			}
 			statscontent += "</table></body></html>"
 			Spinner.hide();
-			myWindow = window.open();
-			myWindow.document.write(statscontent);
-		},
-		error: function(jqXHR, textStatus, errorThrown) {
-			Spinner.hide();
-		},
-
-		timeout: 120000,
-	})
-
+			window[keyterm] = window.open("",keyterm);
+			window[keyterm].document.write(statscontent);
 }
 
 let searchSocket = new WebSocket("ws://localhost:9000/getTweetsBySearchViaWebSocket");
@@ -322,6 +308,63 @@ function processHashTags(hashtag) {
 	};
 
 	hashTagSocket.onerror = function(error) {
+		Spinner.hide();
+		alert(`[error] ${error.message}`);
+	};
+}
+
+//Web Socket implemnetation for displaying statistics
+let wordStatsSocket = new WebSocket("ws://localhost:9000/getTweetStatisticsViaWebSocket");
+wordStatsSocket.onopen = function(e) {
+};
+function wordStats(keyterm) {
+	Spinner.show();
+	let message = {
+		"keyword": keyterm
+	};
+	let msg = JSON.stringify(message);
+	wordStatsSocket.send(msg);
+	wordStatsSocket.onmessage = function(event) {
+		var response = event.data;
+		var parsedRepsonse = JSON.parse(event.data);
+		if(parsedRepsonse.data.isNewData === false) 
+		{
+			displayWordStats(response,keyterm);
+		}
+		else {
+			var WordFrequency = parsedRepsonse.data.wordfrequency;
+			var sortable = [];
+			for (var word in WordFrequency) {
+				sortable.push([word, WordFrequency[word]]);
+			}
+			sortable.sort(function(a, b) {
+				return a[1] - b[1];
+			});
+			sortable.reverse();
+			var statscontent = '';
+			statscontent += "<body id=\""+ keyterm +"\"><table>";
+			statscontent += "<caption style='font-weight:600;font-color:black;'>" + "Word Level Statistics for search query tweet results :" + keyterm +
+				"</caption>"
+			statscontent += "<tr><th>Word</th><th>Frequency</th></tr>"
+			for (let wordcount in sortable) {
+				statscontent += "<tr><td>" + sortable[wordcount][0] + "</td><td>" + sortable[wordcount][1] + "</td></tr>";
+			}
+			statscontent += "</table></body>"
+			window[keyterm].postMessage(statscontent);
+		}
+
+		Spinner.hide();
+	}
+
+	wordStatsSocket.onclose = function(event) {
+		if (event.wasClean) {
+			alert(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+		} else {
+			alert('[close] Connection died');
+		}
+	};
+
+	wordStatsSocket.onerror = function(error) {
 		Spinner.hide();
 		alert(`[error] ${error.message}`);
 	};
