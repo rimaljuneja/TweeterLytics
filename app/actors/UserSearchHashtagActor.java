@@ -5,6 +5,7 @@ import models.TweetSearchResult;
 import models.TweetHashtagSearchResult;
 import play.libs.Json;
 import services.TweetService;
+import services.TwitterApi;
 import utils.Util;
 
 import java.util.HashMap;
@@ -35,6 +36,8 @@ public class UserSearchHashtagActor extends AbstractActor{
 	
 	private final TweetService tweetService;
 	
+	private final TwitterApi twitterApi;
+	
 
     /**
      * Constructor to create instance of this actor.
@@ -42,8 +45,9 @@ public class UserSearchHashtagActor extends AbstractActor{
      * @param tweetService
      * @author Aayush Khandelwal
      */
-    public UserSearchHashtagActor(final ActorRef webSocket,final TweetService tweetService) {
+    public UserSearchHashtagActor(final ActorRef webSocket,final TwitterApi twitterApi,final TweetService tweetService) {
     	this.webSocket =  webSocket;
+    	this.twitterApi = twitterApi;
     	this.tweetService = tweetService;
     }
 
@@ -54,8 +58,8 @@ public class UserSearchHashtagActor extends AbstractActor{
      * @return Props
      * @author Aayush Khandelwal
      */
-    public static Props props(final ActorRef webSocket,final TweetService tweetService) {
-        return Props.create(UserSearchHashtagActor.class, webSocket,tweetService);
+    public static Props props(final ActorRef webSocket,final TwitterApi twitterApi,final TweetService tweetService) {
+        return Props.create(UserSearchHashtagActor.class, webSocket,twitterApi,tweetService);
     }
     
     /**
@@ -118,7 +122,7 @@ public class UserSearchHashtagActor extends AbstractActor{
 		else {
 			
 			//Get tweets via hashtag passed
-			tweetService.searchForKeywordAndGetTweets(hashtag)
+			twitterApi.searchForKeywordAndGetTweets(hashtag)
 			
 			.thenComposeAsync(tweets->	tweetService.getHashtagForTweets(tweets,hashtag))
 			
@@ -149,7 +153,7 @@ public class UserSearchHashtagActor extends AbstractActor{
 		.forEach(hashtag -> {
 			
 			//Get tweets via hashtag passed
-			tweetService.searchForKeywordAndGetTweets(hashtag)
+			twitterApi.searchForKeywordAndGetTweets(hashtag)
 			.thenAcceptAsync(tweets->
 			{
 				

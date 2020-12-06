@@ -14,8 +14,8 @@ public class Tweet {
 
 	/**
 	 * Construtor to create Tweet object from API data
-	 * @param tweetText
-	 * @param userScreenName
+	 * @param tweetText Tweet
+	 * @param userScreenName Username
 	 * @author HGG02
 	 */
 	public Tweet(String tweetText, String userScreenName) {
@@ -25,6 +25,16 @@ public class Tweet {
 		this.userScreenName = userScreenName;
 
 	}
+	
+	@Override
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			return new Tweet(this.tweetText, this.userScreenName);
+		}
+	}
+
 
 	public String getTweetText() {
 		return tweetText;

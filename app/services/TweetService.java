@@ -7,18 +7,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import models.Tweet;
 import models.TweetSearchResult;
 import models.TweetHashtagSearchResult;
-import twitter4j.Query;
-import twitter4j.QueryResult;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
 
 import models.TweetWordStatistics;
 import java.util.LinkedHashMap;
@@ -31,70 +25,12 @@ import java.util.stream.Stream;
  */
 public class TweetService {
 	
-	private Twitter twitter;
-	
-	/**
-	 * Constructor method to initialize TweetService object
-	 * @author HGG02
-	 */
-	public TweetService() {
-		/*
-		Initializing twitter object, 
-	 	so that authentication is done only once when object is created*/
-		twitter = TwitterFactory.getSingleton();
-	}
-
-	/**
-	 * It calls the twitter api and fetches latest 100 Tweets
-	 * @param keyword
-	 * @return List of Tweets
-	 * @author HGG02
-	 */
-	public CompletionStage<List<Tweet>> searchForKeywordAndGetTweets(final String keyword){
-		
-		return supplyAsync (()->{
-
-			List<Tweet> searchResults = new ArrayList<>();
-
-			//Searches for exact phrase and excludes retweets to avoid duplication
-			Query query = new Query("\\\"" +keyword+ "\\\"" + " +exclude:retweets");
-
-			// To get Recent Tweets first
-			query.resultType(Query.RECENT);
-
-			//Fetches First 100 Tweets
-			query.setCount(100);
-
-			QueryResult result = null;
-
-			try {
-
-				result = twitter.search(query);
-
-				searchResults.addAll(result.getTweets().
-						parallelStream().
-						map(status->
-						new Tweet(	status.getText(),
-								status.getUser().getScreenName()
-								)).
-						collect(Collectors.toList()));
-
-			} catch (TwitterException e) {
-				
-				e.printStackTrace();
-				
-			}
-
-			return searchResults;
-			
-		});
-	}
-	
 	/**
 	 * Calculates the average sentiment of tweets.
-	 * @param tweets "List of Tweets"
-	 * @param wordMap "Word Map of postive and negative words"
-	 * @return CompletableFuture "Final TweetSearchResult Object including sentiment data"
+	 * @param tweets List of Tweets
+	 * @param keyword Search Keyword
+	 * @param wordMap Word Map of postive and negative words
+	 * @return CompletableFuture containing Final TweetSearchResult Object including sentiment data
 	 * @author Azim Surani
 	 */
 	public CompletableFuture<TweetSearchResult>  getSentimentForTweets(final List<Tweet> tweets,final String keyword,final Map<String,Integer> wordMap) {
