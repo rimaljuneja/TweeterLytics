@@ -170,7 +170,7 @@ function displayUserTimeline(resultData,userid) {
 			userTimeline += "<caption>*Latest 10 tweets of the above user</caption>"
 			for (x in UserDetails) {
 				userTimeline += "<tr><td>"
-					+ * + "." + "</td>" +
+					+ "*" + "." + "</td>" +
 					"<td>" + UserDetails[x].tweetText + "</td></tr>";
 			}
 			userTimeline += "</table>";
@@ -367,7 +367,7 @@ function displayUser(username) {
 	userProfileSocket.onmessage = function(event) {
 		var response = event.data;
 		var parsedRepsonse = JSON.parse(event.data);
-		if(parsedRepsonse.data.isNewData === false) 
+		if(parsedRepsonse.data.isNewData === false) {
 		
 			displayUserTimeline(response,username);
 		}
@@ -382,7 +382,7 @@ function displayUser(username) {
 			userTimeline += "<caption>*Latest 10 tweets of the above user</caption>"
 			for (x in UserDetails) {
 				userTimeline += "<tr><td>"
-					+ * + "." + "</td>" +
+					+ "*" + "." + "</td>" +
 					"<td>" + UserDetails[x].tweetText + "</td></tr>";
 			}
 			userTimeline += "</table>";
