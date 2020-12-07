@@ -144,6 +144,7 @@ function processSentiment(sentiment) {
 function displayUserTimeline(resultData,userid) {
 			result = JSON.parse(resultData);
 			var UserDetails = result.data.tweets;
+			var userTimeline = '';
 			userTimeline += `<head>
             <title>User Profile</title>
 			<style>
@@ -358,6 +359,7 @@ let userProfileSocket = new WebSocket("ws://localhost:9000/getUserTimelineViaWeb
 userProfileSocket.onopen = function(e) {
 };
 function displayUser(username) {
+
 	Spinner.show();
 	let message = {
 		"userName": username
