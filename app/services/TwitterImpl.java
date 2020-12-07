@@ -14,6 +14,11 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 
+/**
+ * Twitter API Implentation for live mode
+ * @author Azim Surani
+ * @version 1.0.0
+ */
 public class TwitterImpl implements TwitterApi{
 
 	private Twitter twitter;
@@ -31,8 +36,8 @@ public class TwitterImpl implements TwitterApi{
 	
 	/**
 	 * It calls the twitter api and fetches latest 100 Tweets
-	 * @param keyword
-	 * @return List of Tweets
+	 * @param keyword Search keyword
+	 * @return CompletionStage containing List of Tweets
 	 * @author HGG02
 	 */
 	public CompletionStage<List<Tweet>> searchForKeywordAndGetTweets(final String keyword){

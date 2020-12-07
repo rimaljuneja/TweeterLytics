@@ -14,9 +14,9 @@ public class Util {
 	
 	/**
 	 * Generates JSON Response from this specified object
-	 * @param response 
-	 * @param success
-	 * @return JSON Object Response 
+	 * @param response Response Object
+	 * @param success Success
+	 * @return JSON Object Response
 	 * @author HGG02
 	 */
 	public static ObjectNode createResponse(Object response, boolean success) {

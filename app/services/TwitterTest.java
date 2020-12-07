@@ -39,8 +39,8 @@ public class TwitterTest implements TwitterApi{
 
 	/**
 	 * Mock method for searching tweets
-	 * @param keyword
-	 * @return CompletionStage
+	 * @param keyword Search Keyword
+	 * @return CompletionStage containing List of Tweets
 	 * @author Azim Surani
 	 */
 	public CompletionStage<List<Tweet>> searchForKeywordAndGetTweets(final String keyword){

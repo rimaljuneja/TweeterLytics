@@ -40,10 +40,10 @@ public class UserSearchActor extends AbstractActor{
 	
 	/**
 	 * Constructor to create instance of this actor.
-	 * @param webSocket
-	 * @param twitterApi
-	 * @param tweetService
-	 * @param wordMap
+	 * @param webSocket Reference of websocket actor
+	 * @param twitterApi TwitterAPI Implementation
+	 * @param tweetService Tweet Service
+	 * @param wordMap Map of Positive and Negative Words
 	 * @author Azim Surani
 	 */
     public UserSearchActor(final ActorRef webSocket,final TwitterApi twitterApi,final TweetService tweetService,final Map<String,Integer> wordMap) {
@@ -55,13 +55,12 @@ public class UserSearchActor extends AbstractActor{
 
     /**
      * Factory method to create instance of User Search Actor
-     * @param webSocket
-     * @param twitterApi
-     * @param tweetService
-     * @param wordMap
-     * @return Props
+     * @param webSocket Reference of websocket actor
+     * @param twitterApi TwitterAPI Implementation
+     * @param tweetService Tweet Service
+     * @param wordMap wordMap Map of Positive and Negative Words
+     * @return Props Props
      * @author Azim Surani
-     * @param twitterApi 
      */
     public static Props props(final ActorRef webSocket,final TwitterApi twitterApi, final TweetService tweetService,final Map<String,Integer> wordMap) {
         return Props.create(UserSearchActor.class,webSocket,twitterApi,tweetService,wordMap);
@@ -109,7 +108,7 @@ public class UserSearchActor extends AbstractActor{
 	/**
 	 * This method sends new search data when queried by user.
 	 * 
-	 * @param keyword
+	 * @param keyword Keyword for searching tweets
 	 * @author Azim Surani
 	 */
 	private void sendNewData(final String keyword) {
