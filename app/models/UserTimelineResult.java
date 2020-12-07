@@ -11,6 +11,8 @@ public class UserTimelineResult {
 	private String userName;
 	
 	private List<Tweet> tweets;
+	
+	private Boolean isNewData;
 
 	/**
 	 * Construtor to create User Profile object from API data
@@ -22,6 +24,15 @@ public class UserTimelineResult {
 		this.userName = userName;
 		this.tweets = tweets;
 	}
+	
+	@Override
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			return new UserTimelineResult(this.userName, this.tweets);
+		}
+	}
 
 	public String getuserName() {
 		return userName;
@@ -30,6 +41,18 @@ public class UserTimelineResult {
 
 	public List<Tweet> getTweets() {
 		return tweets;
+	}
+	
+	public Boolean getIsNewData() {
+		return isNewData;
+	}
+
+	public void setIsNewData(Boolean isNewData) {
+		this.isNewData = isNewData;
+	}
+	
+	public void setTweets(List<Tweet> tweets) {
+		this.tweets = tweets;
 	}
 
 	

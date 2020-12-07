@@ -12,6 +12,7 @@ import actors.TimeActor;
 import actors.UserSearchActor;
 import actors.UserSearchHashtagActor;
 import actors.WordLevelStatsActor;
+import actors.UserTimelineActor;
 import akka.actor.ActorSystem;
 import akka.stream.Materializer;
 
@@ -187,6 +188,17 @@ public class HomeController extends Controller {
 
 		return WebSocket.Json.accept(request -> ActorFlow.actorRef(ws -> 
 								WordLevelStatsActor.props(ws,twitterApi,tweetService, wordfrequency), actorSystem, materializer));
+
+	}
+	
+	/**
+	 * Creates websocket connection for hashtag search page
+	 * @return WebSocket
+	 */
+	public WebSocket getUserTimelineViaWebSocket() {
+
+		return WebSocket.Json.accept(request -> ActorFlow.actorRef(ws -> 
+								UserTimelineActor.props(ws,twitterApi,profileService), actorSystem, materializer));
 
 	}
 	
