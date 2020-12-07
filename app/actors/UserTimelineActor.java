@@ -115,10 +115,10 @@ public class UserTimelineActor extends AbstractActor{
 	private void sendNewData(final String userName) {
 		
 		// Check if tweet is available in search hisory -- Acts like cache
-		if(searchHistory.containsKey(userName.toLowerCase())) {
+		if(searchHistory.containsKey(userName)) {
 			
 			// Conversion of final TweetSearchResultObject object into JSON format
-			JsonNode jsonObject = Json.toJson(searchHistory.get(userName.toLowerCase()));
+			JsonNode jsonObject = Json.toJson(searchHistory.get(userName));
 			
 			// Send requested data to user via websocket
 			webSocket.tell(Util.createResponse(jsonObject, true), self());
@@ -128,11 +128,11 @@ public class UserTimelineActor extends AbstractActor{
 			
 			//Get tweets via keyword passed
 			ProfileService.getUserTimelineByID(userName)
-			
+			.thenComposeAsync(tweets->	ProfileService.getTweetsByUserName(tweets,userName))
 				.thenAcceptAsync(response -> {
 					
 					// Add data to search history
-					searchHistory.putIfAbsent(userName.toLowerCase(), (UserTimelineResult) response);
+					searchHistory.putIfAbsent(userName,  response);
 				
 					// Conversion of final TweetSearchResultObject object into JSON format
 					JsonNode jsonObject = Json.toJson(response);
@@ -148,7 +148,7 @@ public class UserTimelineActor extends AbstractActor{
 	/**
 	 * This method send new tweets data if available to users via websocket.
 	 * 
-	 * @author Azim Surani
+	 * @author 
 	 */
 	private void sendUpdatedData() {
 		
@@ -158,43 +158,45 @@ public class UserTimelineActor extends AbstractActor{
 			//Get tweets via keyword passed
 			ProfileService.getUserTimelineByID(userName)
 			.thenAcceptAsync(tweets->
-			{
+{
 				
 				// The recent old tweet data - It will help to remove duplicate tweets already served.
 				final String recentOldTweet = searchHistory.get(userName).getTweets().get(0).getTweetText();
 				
 				//Check if first tweet of old and new data is not same
-								/*
-								 * if(!tweets.get(0).getTweetText().equals(recentOldTweet)) {
-								 * 
-								 * //get sentiment of new tweets
-								 * tweetService.getSentimentForTweets(tweets,userName) .thenAcceptAsync(response
-								 * -> {
-								 * 
-								 * int countOfNewTweets = 0;
-								 * 
-								 * // Count how many tweets are actually new for(Tweet newTweet :
-								 * response.getTweets()) { if(newTweet.getTweetText().equals(recentOldTweet))
-								 * break; countOfNewTweets++; }
-								 * 
-								 * // Replace new data in searchHistory
-								 * searchHistory.replace(userName,(TweetSearchResult)response.clone());
-								 * 
-								 * // Keep only new tweets
-								 * response.setTweets(response.getTweets().subList(0,countOfNewTweets));
-								 * 
-								 * // Flag to identify that new data was sent response.setIsNewData(true);
-								 * 
-								 * // Conversion of final TweetSearchResultObject object into JSON format
-								 * JsonNode jsonObject = Json.toJson(response);
-								 * 
-								 * // Send new data to user webSocket.tell(Util.createResponse(jsonObject,
-								 * true), self());
-								 * 
-								 * });
-								 * 
-								 * }
-								 */
+				if(!tweets.get(0).getTweetText().equals(recentOldTweet)) {
+					
+					//get new tweets by hashtag
+					ProfileService.getTweetsByUserName(tweets,userName)
+					.thenAcceptAsync(response -> {
+					
+						int countOfNewTweets = 0;
+						
+						// Count how many tweets are actually new
+						for(Tweet newTweet : response.getTweets()) {
+							if(newTweet.getTweetText().equals(recentOldTweet))
+								break;
+							countOfNewTweets++;
+						}
+						
+						// Replace new data in searchHistory
+						searchHistory.replace(userName,(UserTimelineResult) response.clone());
+						
+						// Keep only new tweets
+						response.setTweets(response.getTweets().subList(0,countOfNewTweets));
+						
+						// Flag to identify that new data was sent
+						response.setIsNewData(true);
+						
+						// Conversion of final TweetSearchResultObject object into JSON format
+						JsonNode jsonObject = Json.toJson(response);
+						
+						// Send new data to user
+						webSocket.tell(Util.createResponse(jsonObject, true), self());
+						
+					});
+
+				}
 
 			});
 		});

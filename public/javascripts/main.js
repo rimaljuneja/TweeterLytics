@@ -141,16 +141,8 @@ function processSentiment(sentiment) {
 }
 
 /*function to display user profile */
-function displayUser(userid) {
-	Spinner.show();
-	userTimeline = '';
-	jQuery.ajax({
-		url: "http://localhost:9000/getUserTimeline/" + (userid),
-		type: "GET",
-		contentType: 'application/json; charset=utf-8',
-
-		success: function(resultData) {
-			result = JSON.parse(JSON.stringify(resultData));
+function displayUserTimeline(resultData,userid) {
+			result = JSON.parse(resultData);
 			var UserDetails = result.data.tweets;
 			userTimeline += `<head>
             <title>User Profile</title>
@@ -168,33 +160,24 @@ function displayUser(userid) {
 			</style>
 					<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 					<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-			</head>`
-			var tweetcount = 1;
-			userTimeline += `<div class="container">
- 				<div class="jumbotron">`
+			`
+			userTimeline +=	"<script>  const userid = \""+ userid + "\"; window.addEventListener(\"message\", (event) => { var element = document.getElementById(userid); element.innerHTML = event.data;} , false);</script></head>"
+			userTimeline += "<body id=\""+ userid +"\">";
+			userTimeline += `<div class="container"><div class="jumbotron">`
 			userTimeline += "<h2 class=\"center\">User Profile:" + "@" + userid + "</h2></div></div>"
 			userTimeline += "<div class=\"row\"><div class=\"col-md-3\"></div><div class=\"col-md-6\">"
 			userTimeline += "<table border='1'>"
 			userTimeline += "<caption>*Latest 10 tweets of the above user</caption>"
 			for (x in UserDetails) {
 				userTimeline += "<tr><td>"
-					+ tweetcount + "." + "</td>" +
+					+ * + "." + "</td>" +
 					"<td>" + UserDetails[x].tweetText + "</td></tr>";
-				tweetcount++;
 			}
 			userTimeline += "</table>";
-			userTimeline += "<div class=\"col-md-3\"></div></div>"
+			userTimeline += "<div class=\"col-md-3\"></div></div></body>"
 			Spinner.hide();
-			window[keyterm] = window.open();
-			window[keyterm].document.write(userTimeline);
-		},
-		error: function(jqXHR, textStatus, errorThrown) {
-			Spinner.hide();
-		},
-
-		timeout: 120000,
-	})
-
+			window[userid] = window.open();
+			window[userid].document.write(userTimeline);
 }
 
 /*function to display word level statistics 
@@ -365,6 +348,61 @@ function wordStats(keyterm) {
 	};
 
 	wordStatsSocket.onerror = function(error) {
+		Spinner.hide();
+		alert(`[error] ${error.message}`);
+	};
+}
+
+//Web Socket implemnetation for displaying user timeline
+let userProfileSocket = new WebSocket("ws://localhost:9000/getUserTimelineViaWebSocket");
+userProfileSocket.onopen = function(e) {
+};
+function displayUser(username) {
+	Spinner.show();
+	let message = {
+		"userName": username
+	};
+	let msg = JSON.stringify(message);
+	userProfileSocket.send(msg);
+	userProfileSocket.onmessage = function(event) {
+		var response = event.data;
+		var parsedRepsonse = JSON.parse(event.data);
+		if(parsedRepsonse.data.isNewData === false) 
+		
+			displayUserTimeline(response,username);
+		}
+		else {
+			var UserDetails = parsedRepsonse.data.tweets;
+			var userTimeline ='';
+			userTimeline += "<body id=\""+ username +"\">";
+			userTimeline += `<div class="container"><div class="jumbotron">`
+			userTimeline += "<h2 class=\"center\">User Profile:" + "@" + username + "</h2></div></div>"
+			userTimeline += "<div class=\"row\"><div class=\"col-md-3\"></div><div class=\"col-md-6\">"
+			userTimeline += "<table border='1'>"
+			userTimeline += "<caption>*Latest 10 tweets of the above user</caption>"
+			for (x in UserDetails) {
+				userTimeline += "<tr><td>"
+					+ * + "." + "</td>" +
+					"<td>" + UserDetails[x].tweetText + "</td></tr>";
+			}
+			userTimeline += "</table>";
+			userTimeline += "<div class=\"col-md-3\"></div></div></body>"
+			Spinner.hide();
+			window[keyterm].postMessage(userTimeline);
+		}
+
+		Spinner.hide();
+	}
+
+	userProfileSocket.onclose = function(event) {
+		if (event.wasClean) {
+			alert(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+		} else {
+			alert('[close] Connection died');
+		}
+	};
+
+	userProfileSocket.onerror = function(error) {
 		Spinner.hide();
 		alert(`[error] ${error.message}`);
 	};

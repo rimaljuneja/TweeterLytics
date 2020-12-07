@@ -7,6 +7,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import models.Tweet;
+import models.TweetHashtagSearchResult;
+import models.UserTimelineResult;
 import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
@@ -51,6 +53,14 @@ public class ProfileService {
 		});
 	}
 	
+	public CompletableFuture<UserTimelineResult>  getTweetsByUserName(final List<Tweet> tweets,final String username) {
+
+		return supplyAsync (()->{
+			
+			return new UserTimelineResult(username, tweets.subList(0, tweets.size() < 10 ? tweets.size() : 10));
+
+		});
+	}
 	
 	
 }
