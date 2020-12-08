@@ -43,7 +43,7 @@ function searchDisplay(resultData) {
 		Spinner.hide();
 
 	} else {
-			Spinner.show();
+		Spinner.show();
 		for (x in myObj) {
 			txt += "<td>" + "*" + "</td>" +
 				"<td>" + "<a id=\"" + myObj[x].userScreenName + "\"onclick=\"displayUser(\'" + myObj[x].userScreenName + "\')\"" + ">" + "@" + myObj[x].userScreenName + "</a></td>" +
@@ -57,7 +57,9 @@ function searchDisplay(resultData) {
 			txt = "";
 		}
 		count--;
-		Spinner.hide();
+		setTimeout(function() {
+				Spinner.hide();
+		}, 3000);
 	}
 }
 /*,
@@ -105,7 +107,6 @@ function DisplayHashTagResult(resultData) {
 		txt = "";
 		document.getElementById("demo").innerHTML = finaltext;
 		Spinner.hide();
-
 	} else {
 		Spinner.show();
 		for (x in myObj) {
@@ -122,7 +123,9 @@ function DisplayHashTagResult(resultData) {
 			txt ="";
 		}
 		count--;
-		Spinner.hide();
+		setTimeout(function() {
+				Spinner.hide();
+		}, 3000);
 	}
 }
 
@@ -254,7 +257,6 @@ function search() {
 	searchSocket.onmessage = function(event) {
 		var response = event.data;
 		searchDisplay(response);
-		Spinner.hide();
 	}
 
 	searchSocket.onclose = function(event) {
@@ -287,7 +289,6 @@ function processHashTags(hashtag) {
 	hashTagSocket.onmessage = function(event) {
 		var response = event.data;
 		DisplayHashTagResult(response);
-		Spinner.hide();
 	}
 
 	hashTagSocket.onclose = function(event) {
@@ -296,6 +297,7 @@ function processHashTags(hashtag) {
 		} else {
 			alert('[close] Connection died');
 		}
+				Spinner.hide();
 	};
 
 	hashTagSocket.onerror = function(error) {
@@ -380,7 +382,6 @@ function displayUser(username) {
 			displayUserTimeline(response,username);
 		}
 		else {
-		debugger;
 			var UserDetails = parsedRepsonse.data.tweets;
 			var userTimeline ='';
 			for (x in UserDetails) {
@@ -391,7 +392,6 @@ function displayUser(username) {
 			userTimeline = '';
 			}
 			Spinner.hide();
-			//window[username].postMessage(userTimeline);
 		}
 
 		Spinner.hide();
@@ -403,6 +403,7 @@ function displayUser(username) {
 		} else {
 			alert('[close] Connection died');
 		}
+		Spinner.hide();
 	};
 
 	userProfileSocket.onerror = function(error) {
