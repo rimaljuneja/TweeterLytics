@@ -162,13 +162,13 @@ function displayUserTimeline(resultData,userid) {
 					<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 					<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 			`
-			userTimeline +=	"<script>  const userid = \""+ userid + "\"; window.addEventListener(\"message\", (event) => { var element = document.getElementById(userid); element.innerHTML = event.data;} , false);</script></head>"
-			userTimeline += "<body id=\""+ userid +"\">";
+			userTimeline +=	"<script>  const userid = \""+ userid + "\"; window.addEventListener(\"message\", (event) => {debugger; var table = document.getElementById(userid);	var row = table.insertRow(0); 			row.innerHTML = event.data} , false);</script></head>"
+			userTimeline += "<body>";
 			userTimeline += `<div class="container"><div class="jumbotron">`
 			userTimeline += "<h2 class=\"center\">User Profile:" + "@" + userid + "</h2></div></div>"
 			userTimeline += "<div class=\"row\"><div class=\"col-md-3\"></div><div class=\"col-md-6\">"
-			userTimeline += "<table border='1'>"
-			userTimeline += "<caption>*Latest 10 tweets of the above user</caption>"
+			userTimeline += "<table id=\""+ userid + "\" border='1'>"
+			userTimeline += "<caption>*Latest tweets of the above user</caption>"
 			for (x in UserDetails) {
 				userTimeline += "<tr><td>"
 					+ "*" + "." + "</td>" +
@@ -359,7 +359,6 @@ let userProfileSocket = new WebSocket("ws://localhost:9000/getUserTimelineViaWeb
 userProfileSocket.onopen = function(e) {
 };
 function displayUser(username) {
-
 	Spinner.show();
 	let message = {
 		"userName": username
@@ -374,23 +373,18 @@ function displayUser(username) {
 			displayUserTimeline(response,username);
 		}
 		else {
+		debugger;
 			var UserDetails = parsedRepsonse.data.tweets;
 			var userTimeline ='';
-			userTimeline += "<body id=\""+ username +"\">";
-			userTimeline += `<div class="container"><div class="jumbotron">`
-			userTimeline += "<h2 class=\"center\">User Profile:" + "@" + username + "</h2></div></div>"
-			userTimeline += "<div class=\"row\"><div class=\"col-md-3\"></div><div class=\"col-md-6\">"
-			userTimeline += "<table border='1'>"
-			userTimeline += "<caption>*Latest 10 tweets of the above user</caption>"
 			for (x in UserDetails) {
-				userTimeline += "<tr><td>"
+				userTimeline += "<td>"
 					+ "*" + "." + "</td>" +
-					"<td>" + UserDetails[x].tweetText + "</td></tr>";
+					"<td>" + UserDetails[x].tweetText + "</td>";
+			window[username].postMessage(userTimeline);
+			userTimeline = '';
 			}
-			userTimeline += "</table>";
-			userTimeline += "<div class=\"col-md-3\"></div></div></body>"
 			Spinner.hide();
-			window[keyterm].postMessage(userTimeline);
+			//window[username].postMessage(userTimeline);
 		}
 
 		Spinner.hide();

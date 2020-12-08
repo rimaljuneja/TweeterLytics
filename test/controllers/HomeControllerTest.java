@@ -15,7 +15,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import actors.TimeActor;
 import actors.UserSearchActor;
 import actors.UserSearchHashtagActor;
+
 import actors.UserTimelineActor;
+
+import actors.WordLevelStatsActor;
+
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.testkit.javadsl.TestKit;
@@ -66,6 +70,8 @@ public class HomeControllerTest extends WithApplication {
 	ActorSystem system;
 	
 	private Map<String,Integer> wordMap = new HashMap<>();
+	
+	private  Map<String, Integer> wordfrequency = new HashMap<>();
 	
 	TwitterApi testApi;
 	
@@ -273,6 +279,41 @@ public class HomeControllerTest extends WithApplication {
     	
     }
     
+    @Test
+    public void testWordStatistics() {
+    	
+    	final TestKit testProbe = new TestKit(system);
+    	
+    	final ActorRef timeActor = system.actorOf(TimeActor.props());
+    	
+    	final ActorRef wordLevelStatsActor = system.actorOf(WordLevelStatsActor.props(testProbe.getRef(),testApi,tweetService,wordfrequency));
+    	
+    	for(int i=0;i<2;i++) {
+   
+    		for(Entry<String, List<Tweet>> tweets : mockTweets.entrySet()) {
+
+    	    	final ObjectMapper mapper = new ObjectMapper();
+    	        
+    	    	final ObjectNode request = mapper.createObjectNode();
+    	        
+    	    	request.set("keyword", mapper.convertValue(tweets.getKey(), JsonNode.class));
+
+    	    	wordLevelStatsActor.tell(request, ActorRef.noSender());
+    	    	
+    	    	testProbe.expectMsgClass(ObjectNode.class);
+
+    	    	
+    		}
+    		
+    	}
+    	
+    	try {
+			Thread.sleep(40000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+    	
+    }
     
 	
 	  @Test public void testUserTimeline() {
