@@ -91,7 +91,7 @@ public class UserSearchActor extends AbstractActor{
     }
 
 	/**
-	 * It reeceives messages and decides action based on message type.
+	 * It receives messages and decides action based on message type.
 	 * 
 	 * @author Azim Surani
 	 */

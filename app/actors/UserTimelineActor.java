@@ -42,6 +42,7 @@ public class UserTimelineActor extends AbstractActor{
 	/**
 	 * Constructor to create instance of this actor.
 	 * @param webSocket
+	 * @param twitterApi TwitterAPI Implementation
 	 * @param ProfileService
 	 * @author Rimal Juneja
 	 */

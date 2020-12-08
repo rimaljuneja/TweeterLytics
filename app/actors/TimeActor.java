@@ -81,7 +81,7 @@ public class TimeActor extends AbstractActorWithTimers {
     }
     
     /**
-     * It reeceives messages and decides action based on message type.
+     * It receives messages and decides action based on message type.
      * 
      * @author HGG02
      */

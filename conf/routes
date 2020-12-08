@@ -5,14 +5,9 @@
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
 
-#Returns 10 latest tweets for entered search term
-#GET		/search/:keyword			controllers.HomeController.getTweetsBySearch(keyword:String)
 
 #Returns websocket connection for searching tweets by keyword
 GET		/getTweetsBySearchViaWebSocket			controllers.HomeController.getTweetsBySearchViaWebSocket()
-
-#Retrieves word level statistics for entered search term
-#GET		/statistics/:keyword			controllers.HomeController.getStatisticsForSearchTerm(keyword:String)
 
 #Returns word level statistics for the search term through web sockets
 GET		/getTweetStatisticsViaWebSocket			controllers.HomeController.getTweetStatisticsViaWebSocket()
@@ -20,12 +15,8 @@ GET		/getTweetStatisticsViaWebSocket			controllers.HomeController.getTweetStatis
 #Returns websocket connection for searching tweets by hashtag
 GET		/getUserTimelineViaWebSocket			controllers.HomeController.getUserTimelineViaWebSocket()
 
-#Returns the tweets by corresponding hashtag
-#GET     /searchbyhashtag/:hashtag            controllers.HomeController.getTweetByHashtag(hashtag: String)
-
 #Returns websocket connection for searching tweets by hashtag
 GET		/getTweetsByHashtagViaWebSocket			controllers.HomeController.getTweetsByHashtagViaWebSocket()
-
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

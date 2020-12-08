@@ -42,6 +42,7 @@ public class UserSearchHashtagActor extends AbstractActor{
     /**
      * Constructor to create instance of this actor.
      * @param webSocket
+     * @param twitterApi TwitterAPI Implementation
      * @param tweetService
      * @author Aayush Khandelwal
      */
@@ -54,6 +55,7 @@ public class UserSearchHashtagActor extends AbstractActor{
     /**
      * Factory method to create instance of User Search Hashtag Actor
      * @param webSocket
+     * @param twitterApi TwitterAPI Implementation
      * @param tweetService
      * @return Props
      * @author Aayush Khandelwal
@@ -87,7 +89,7 @@ public class UserSearchHashtagActor extends AbstractActor{
     }
 
 	/**
-	 * It reeceives messages and decides action based on message type.
+	 * It receives messages and decides action based on message type.
 	 * 
 	 * @author Aayush Khandelwal
 	 */
