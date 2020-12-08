@@ -4,8 +4,12 @@ import java.util.List;
 import java.util.concurrent.CompletionStage;
 
 import models.Tweet;
-import twitter4j.Status;
 
+/**
+ * Twitter API Interface containg declaration of API methods
+ * @author Azim Surani
+ * @version 1.0.0
+ */
 public interface TwitterApi {
 	
 	public abstract CompletionStage<List<Tweet>> searchForKeywordAndGetTweets(final String keyword);
