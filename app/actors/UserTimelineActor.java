@@ -6,6 +6,7 @@ import models.UserTimelineResult;
 import play.libs.Json;
 
 import services.ProfileService;
+import services.TwitterApi;
 import utils.Util;
 
 import java.util.HashMap;
@@ -33,6 +34,8 @@ public class UserTimelineActor extends AbstractActor{
 	
 	private final ActorRef webSocket;
 	
+	private final TwitterApi twitterApi;
+	
 	private final ProfileService ProfileService;
 	
 	
@@ -42,9 +45,9 @@ public class UserTimelineActor extends AbstractActor{
 	 * @param ProfileService
 	 * @author Rimal Juneja
 	 */
-    public UserTimelineActor(final ActorRef webSocket, final ProfileService ProfileService) {
+    public UserTimelineActor(final ActorRef webSocket,final TwitterApi twitterApi, final ProfileService ProfileService) {
     	this.webSocket =  webSocket;
-    	
+    	this.twitterApi = twitterApi;
     	this.ProfileService = ProfileService;
     }
 
@@ -56,8 +59,8 @@ public class UserTimelineActor extends AbstractActor{
      * @author Rimal Juneja
     
      */
-    public static Props props(final ActorRef webSocket, final ProfileService ProfileService) {
-        return Props.create(UserTimelineActor.class,webSocket,ProfileService);
+    public static Props props(final ActorRef webSocket,final TwitterApi twitterApi, final ProfileService ProfileService) {
+        return Props.create(UserTimelineActor.class,webSocket,twitterApi,ProfileService);
     }
     
     /**
@@ -120,7 +123,7 @@ public class UserTimelineActor extends AbstractActor{
 		else {
 			
 			//Get userProfile via username 
-			ProfileService.getUserTimelineByID(userName)
+			twitterApi.getUserTimelineByID(userName)
 			.thenComposeAsync(tweets->	ProfileService.getTweetsByUserName(tweets,userName))
 				.thenAcceptAsync(response -> {
 					
@@ -149,7 +152,7 @@ public class UserTimelineActor extends AbstractActor{
 		.forEach(userName -> {
 			
 			//Get tweets of username passed
-			ProfileService.getUserTimelineByID(userName)
+			twitterApi.getUserTimelineByID(userName)
 			.thenAcceptAsync(tweets->
 {
 				

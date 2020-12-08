@@ -199,7 +199,7 @@ public class HomeController extends Controller {
 	public WebSocket getUserTimelineViaWebSocket() {
 
 		return WebSocket.Json.accept(request -> ActorFlow.actorRef(ws -> 
-								UserTimelineActor.props(ws,profileService), actorSystem, materializer));
+								UserTimelineActor.props(ws,twitterApi,profileService), actorSystem, materializer));
 
 	}
 	

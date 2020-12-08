@@ -10,7 +10,7 @@ public interface TwitterApi {
 	
 	public abstract CompletionStage<List<Tweet>> searchForKeywordAndGetTweets(final String keyword);
 	
-	
+	public abstract CompletionStage<List<Tweet>> getUserTimelineByID(final String username);
 	
 	
 }

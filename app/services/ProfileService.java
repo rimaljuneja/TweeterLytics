@@ -24,34 +24,7 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
  */
 public class ProfileService {
 
-	public   CompletableFuture<List<Tweet>> getUserTimelineByID(String userName){
-		return supplyAsync(()->{
-		List<Tweet> searchResults = new ArrayList<>();
-
-		Twitter twitter = TwitterFactory.getSingleton();
-        List<Status> statuses = new ArrayList<>();
-
-		try {
-            
-            statuses = twitter.getUserTimeline(userName);
-            searchResults.addAll(statuses.
-					parallelStream().
-					map(status->
-						new Tweet(	status.getText(),
-									status.getUser().getScreenName()
-									)).
-					collect(Collectors.toList()));
-           
-          
-           
-        } catch (TwitterException te) {
-            te.printStackTrace();
-          
-            System.exit(-1);
-        }
-		 return searchResults;
-		});
-	}
+	
 	
 	
 	public CompletableFuture<UserTimelineResult>  getTweetsByUserName(final List<Tweet> tweets,final String username) {

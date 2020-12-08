@@ -4,12 +4,14 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
 import models.Tweet;
 import twitter4j.Query;
 import twitter4j.QueryResult;
+import twitter4j.Status;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
@@ -77,6 +79,36 @@ public class TwitterImpl implements TwitterApi{
 
 			return searchResults;
 			
+		});
+	}
+	
+	
+	public   CompletableFuture<List<Tweet>> getUserTimelineByID(String userName){
+		return supplyAsync(()->{
+		List<Tweet> searchResults = new ArrayList<>();
+
+		Twitter twitter = TwitterFactory.getSingleton();
+        List<Status> statuses = new ArrayList<>();
+
+		try {
+            
+            statuses = twitter.getUserTimeline(userName);
+            searchResults.addAll(statuses.
+					parallelStream().
+					map(status->
+						new Tweet(	status.getText(),
+									status.getUser().getScreenName()
+									)).
+					collect(Collectors.toList()));
+           
+          
+           
+        } catch (TwitterException te) {
+            te.printStackTrace();
+          
+            System.exit(-1);
+        }
+		 return searchResults;
 		});
 	}
 
