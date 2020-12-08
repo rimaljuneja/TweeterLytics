@@ -148,6 +148,8 @@ public class UserTimelineActor extends AbstractActor{
 	 */
 	private void sendUpdatedData() {
 		
+		
+		
 		searchHistory.keySet().parallelStream()
 		.forEach(userName -> {
 			
