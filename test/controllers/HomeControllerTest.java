@@ -77,6 +77,8 @@ public class HomeControllerTest extends WithApplication {
 	
 	private static Application testApp;
 	
+	private ActorRef timeActor;
+	
 	@BeforeClass
 	public static void initTestApp() {
 		testApp = new GuiceApplicationBuilder()
@@ -98,9 +100,12 @@ public class HomeControllerTest extends WithApplication {
 		//profileTimelineService = Mockito.mock(ProfileService.class);
 		
 		profileTimelineService = new ProfileService();
+		
 		tweetService = new TweetService();
 
 		system = ActorSystem.create();
+		
+		timeActor = system.actorOf(TimeActor.props(),"timeActor");
 		
 		Path path = Paths.get("Wordlist/positive-words.txt");
 
@@ -211,8 +216,6 @@ public class HomeControllerTest extends WithApplication {
     	
     	final TestKit testProbe = new TestKit(system);
     	
-    	final ActorRef timeActor = system.actorOf(TimeActor.props());
-    	
     	final ActorRef userSearchActor = system.actorOf(UserSearchActor.props(testProbe.getRef(),testApi,tweetService, wordMap));
     	
     	for(int i=0;i<2;i++) {
@@ -248,8 +251,6 @@ public class HomeControllerTest extends WithApplication {
     	
     	final TestKit testProbe = new TestKit(system);
     	
-    	final ActorRef timeActor = system.actorOf(TimeActor.props());
-    	
     	final ActorRef userSearchHashtagActor = system.actorOf(UserSearchHashtagActor.props(testProbe.getRef(),testApi,tweetService));
     	
     	for(int i=0;i<2;i++) {
@@ -284,8 +285,6 @@ public class HomeControllerTest extends WithApplication {
     	
     	final TestKit testProbe = new TestKit(system);
     	
-    	final ActorRef timeActor = system.actorOf(TimeActor.props());
-    	
     	final ActorRef wordLevelStatsActor = system.actorOf(WordLevelStatsActor.props(testProbe.getRef(),testApi,tweetService,wordfrequency));
     	
     	for(int i=0;i<2;i++) {
@@ -316,40 +315,43 @@ public class HomeControllerTest extends WithApplication {
     }
     
 	
-	  @Test public void testUserTimeline() {
-	  
-	  final TestKit testProbe = new TestKit(system);
-	  
-	  final ActorRef timeActor = system.actorOf(TimeActor.props());
-	  
-	  final ActorRef userTimelineActor = system.actorOf(UserTimelineActor.props(testProbe.getRef(),  profileTimelineService));
-	  
-
-	  
-	  for(Entry<String, List<Tweet>> tweets : timelineMockTweets.entrySet()) {
-	  
-		  
-	  final ObjectMapper mapper = new ObjectMapper();
-	  
-	  final ObjectNode request = mapper.createObjectNode();
-	  
-	  request.set("username", mapper.convertValue(tweets.getKey(),
-	  JsonNode.class));
-	  
-	  userTimelineActor.tell(request, ActorRef.noSender());
-	  
-	  testProbe.expectMsgClass(ObjectNode.class);
-	  
-	  
-	  
-	  
-	  }
-	  
-	  try { Thread.sleep(40000); } catch (InterruptedException e) {
-	  e.printStackTrace(); }
-	  
-	  }
-	 
+	/*
+	 * @Test public void testUserTimeline() {
+	 * 
+	 * final TestKit testProbe = new TestKit(system);
+	 * 
+	 * final ActorRef timeActor = system.actorOf(TimeActor.props());
+	 * 
+	 * final ActorRef userTimelineActor =
+	 * system.actorOf(UserTimelineActor.props(testProbe.getRef(),
+	 * profileTimelineService));
+	 * 
+	 * 
+	 * 
+	 * for(Entry<String, List<Tweet>> tweets : timelineMockTweets.entrySet()) {
+	 * 
+	 * 
+	 * final ObjectMapper mapper = new ObjectMapper();
+	 * 
+	 * final ObjectNode request = mapper.createObjectNode();
+	 * 
+	 * request.set("username", mapper.convertValue(tweets.getKey(),
+	 * JsonNode.class));
+	 * 
+	 * userTimelineActor.tell(request, ActorRef.noSender());
+	 * 
+	 * testProbe.expectMsgClass(ObjectNode.class);
+	 * 
+	 * 
+	 * 
+	 * 
+	 * }
+	 * 
+	 * try { Thread.sleep(40000); } catch (InterruptedException e) {
+	 * e.printStackTrace(); }
+	 * 
+	 * }
+	 */
     
     
     /*public void testUserTimeline() {
