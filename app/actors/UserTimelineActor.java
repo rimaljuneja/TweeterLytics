@@ -55,6 +55,7 @@ public class UserTimelineActor extends AbstractActor{
     /**
      * Factory method to create instance of User Search Actor
      * @param webSocket
+     * @param twitterApi
      * @param ProfileService 
      * @return Props
      * @author Rimal Juneja
@@ -104,7 +105,7 @@ public class UserTimelineActor extends AbstractActor{
 
 	
 	/**
-	 * This method sends new search data when queried by user.
+	 * This method sends new search data(tweets) of user.
 	 * 
 	 * @param userName
 	 * @author Rimal Juneja

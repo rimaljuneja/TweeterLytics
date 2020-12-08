@@ -82,7 +82,12 @@ public class TwitterImpl implements TwitterApi{
 		});
 	}
 	
-	
+	/**
+	 * It calls the twitter api and fetches latest 10 Tweets
+	 * @param userName Search userTimeline
+	 * @return CompletionStage containing List of Tweets
+	 * @author Rimal Juneja
+	 */
 	public   CompletableFuture<List<Tweet>> getUserTimelineByID(String userName){
 		return supplyAsync(()->{
 		List<Tweet> searchResults = new ArrayList<>();
