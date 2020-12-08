@@ -27,7 +27,7 @@ function searchDisplay(resultData) {
 	var tweets = result.data.tweets;
 	myObj = JSON.parse(JSON.stringify(tweets));
 	if (result.data.isNewData === false) {
-		txt += "<table id=\"" + result.data.keyword + "\" border='1'>"
+		txt += "<table class=\"" + result.data.keyword.toLowerCase() + "\" border='1'>"
 		txt += "<caption>" + "Search terms:" + "<a id=\"" + result.data.keyword + "\"onclick=\"wordStats(\'" + result.data.keyword + "\')\"" + ">  " + result.data.keyword + "</a>  " +
 			processSentiment(result.data.sentiment) +
 			"</caption>"
@@ -43,14 +43,18 @@ function searchDisplay(resultData) {
 		Spinner.hide();
 
 	} else {
+			Spinner.show();
 		for (x in myObj) {
 			txt += "<td>" + "*" + "</td>" +
 				"<td>" + "<a id=\"" + myObj[x].userScreenName + "\"onclick=\"displayUser(\'" + myObj[x].userScreenName + "\')\"" + ">" + "@" + myObj[x].userScreenName + "</a></td>" +
 				"<td>" + displayHashTags(myObj[x].tweetText) + "</td>";
-			var table = document.getElementById(result.data.keyword);
-			var row = table.insertRow(0);
-			row.innerHTML = txt
-			txt = ""
+			var table = document.getElementsByClassName(result.data.keyword.toLowerCase());
+			for(i =0; i< table.length; i++)
+			{
+			var row = table[i].insertRow(0);
+			row.innerHTML = txt;
+			}
+			txt = "";
 		}
 		count--;
 		Spinner.hide();
@@ -88,7 +92,7 @@ function DisplayHashTagResult(resultData) {
 	var tweets = result.data.tweets;
 	myObj = JSON.parse(JSON.stringify(tweets));
 	if (result.data.isNewData === false) {
-		txt += "<table id=\"" + result.data.hashtag + "\" border='1'>"
+		txt += "<table class=\"" + result.data.hashtag.toLowerCase() + "\" border='1'>"
 		txt += "<caption>" + "Hashtag Result:" + result.data.hashtag
 		"</caption>"
 		for (x in myObj) {
@@ -103,16 +107,19 @@ function DisplayHashTagResult(resultData) {
 		Spinner.hide();
 
 	} else {
-		txt = "------------------------"
+		Spinner.show();
 		for (x in myObj) {
 			txt += "<td>"
 				+ "*" + "</td>" +
 				"<td>" + "<a id=\"" + myObj[x].userScreenName + "\"onclick=\"displayUser(\'" + myObj[x].userScreenName + "\')\"" + ">" + "@" + myObj[x].userScreenName + "</a></td>" +
 				"<td>" + displayHashTags(myObj[x].tweetText) + "</td>";
-			var table = document.getElementById(result.data.hashtag);
-			var row = table.insertRow(0);
-			row.innerHTML = txt
-			txt = "";
+			var table = document.getElementsByClassName(result.data.hashtag.toLowerCase());
+			for(i =0; i< table.length; i++)
+			{
+			var row = table[i].insertRow(0);
+			row.innerHTML = txt;
+			}
+			txt ="";
 		}
 		count--;
 		Spinner.hide();
