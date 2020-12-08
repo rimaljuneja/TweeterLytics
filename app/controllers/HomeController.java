@@ -193,13 +193,13 @@ public class HomeController extends Controller {
 	}
 	
 	/**
-	 * Creates websocket connection for hashtag search page
+	 * Creates websocket connection for UserTimeline  page
 	 * @return WebSocket
 	 */
 	public WebSocket getUserTimelineViaWebSocket() {
 
 		return WebSocket.Json.accept(request -> ActorFlow.actorRef(ws -> 
-								UserTimelineActor.props(ws,twitterApi,profileService), actorSystem, materializer));
+								UserTimelineActor.props(ws,profileService), actorSystem, materializer));
 
 	}
 	
@@ -242,20 +242,21 @@ public class HomeController extends Controller {
 	 * @author Rimal Juneja
 	 */
 
-	public CompletionStage<Result> getUserTimeline(final String userName) {
-
-		return profileService.getUserTimelineByID(userName).thenApplyAsync((userTweets)->{
-			
-
-			UserTimelineResult response = new UserTimelineResult(userName, userTweets.subList
-					(0, userTweets.size() < 10 ? userTweets.size() : 10));
-
-			JsonNode jsonObject = Json.toJson(response);
-			
-
-			return ok(Util.createResponse(jsonObject, true));
-		});
-	}
+	/*
+	 * public CompletionStage<Result> getUserTimeline(final String userName) {
+	 * 
+	 * return
+	 * profileService.getUserTimelineByID(userName).thenApplyAsync((userTweets)->{
+	 * 
+	 * 
+	 * UserTimelineResult response = new UserTimelineResult(userName,
+	 * userTweets.subList (0, userTweets.size() < 10 ? userTweets.size() : 10));
+	 * 
+	 * JsonNode jsonObject = Json.toJson(response);
+	 * 
+	 * 
+	 * return ok(Util.createResponse(jsonObject, true)); }); }
+	 */
 	
 	/**
 	 * Returns latest 10 tweets as per the provided search hashtag

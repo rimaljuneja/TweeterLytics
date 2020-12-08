@@ -12,10 +12,10 @@ public class UserTimelineResult {
 	
 	private List<Tweet> tweets;
 	
-	private Boolean isNewData;
+	private Boolean isNewData = false;
 
 	/**
-	 * Construtor to create User Profile object from API data
+	 * Constructor to create User Profile object from API data
 	 * @param userName
 	 * @param tweets
 	 * @author Rimal Juneja
@@ -23,6 +23,7 @@ public class UserTimelineResult {
 	public UserTimelineResult(String userName, List<Tweet> tweets) {
 		this.userName = userName;
 		this.tweets = tweets;
+		this.isNewData = false;
 	}
 	
 	@Override

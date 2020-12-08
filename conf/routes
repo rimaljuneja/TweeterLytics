@@ -17,9 +17,6 @@ GET		/getTweetsBySearchViaWebSocket			controllers.HomeController.getTweetsBySear
 #Returns word level statistics for the search term through web sockets
 GET		/getTweetStatisticsViaWebSocket			controllers.HomeController.getTweetStatisticsViaWebSocket()
 
-#Retrieves the User information
-GET     /getUserTimeline/:userId           controllers.HomeController.getUserTimeline(userId: String)
-
 #Returns websocket connection for searching tweets by hashtag
 GET		/getUserTimelineViaWebSocket			controllers.HomeController.getUserTimelineViaWebSocket()
 

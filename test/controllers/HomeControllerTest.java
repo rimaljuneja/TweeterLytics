@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import actors.TimeActor;
 import actors.UserSearchActor;
 import actors.UserSearchHashtagActor;
+import actors.UserTimelineActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.testkit.javadsl.TestKit;
@@ -88,8 +89,9 @@ public class HomeControllerTest extends WithApplication {
 	
 		testApi = testApp.injector().instanceOf(TwitterApi.class);
 
-		profileTimelineService = Mockito.mock(ProfileService.class);
+		//profileTimelineService = Mockito.mock(ProfileService.class);
 		
+		profileTimelineService = new ProfileService();
 		tweetService = new TweetService();
 
 		system = ActorSystem.create();
@@ -270,6 +272,43 @@ public class HomeControllerTest extends WithApplication {
 		}
     	
     }
+    
+    
+	
+	  @Test public void testUserTimeline() {
+	  
+	  final TestKit testProbe = new TestKit(system);
+	  
+	  final ActorRef timeActor = system.actorOf(TimeActor.props());
+	  
+	  final ActorRef userTimelineActor = system.actorOf(UserTimelineActor.props(testProbe.getRef(),  profileTimelineService));
+	  
+
+	  
+	  for(Entry<String, List<Tweet>> tweets : timelineMockTweets.entrySet()) {
+	  
+		  
+	  final ObjectMapper mapper = new ObjectMapper();
+	  
+	  final ObjectNode request = mapper.createObjectNode();
+	  
+	  request.set("username", mapper.convertValue(tweets.getKey(),
+	  JsonNode.class));
+	  
+	  userTimelineActor.tell(request, ActorRef.noSender());
+	  
+	  testProbe.expectMsgClass(ObjectNode.class);
+	  
+	  
+	  
+	  
+	  }
+	  
+	  try { Thread.sleep(40000); } catch (InterruptedException e) {
+	  e.printStackTrace(); }
+	  
+	  }
+	 
     
     
     /*public void testUserTimeline() {

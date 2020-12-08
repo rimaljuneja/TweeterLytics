@@ -62,7 +62,7 @@ public class TimeActor extends AbstractActorWithTimers {
     /**
      * Factory method to create instance of Time Actor.
      * 
-     * @return Props Props
+     * @return Props "Instance of Time Actor"
      * @author HGG02
      */
     public static Props props() {
@@ -81,7 +81,7 @@ public class TimeActor extends AbstractActorWithTimers {
     }
     
     /**
-     * It reeceives messages and decides action based on message type.
+     * It receives messages and decides action based on message type.
      * 
      * @author HGG02
      */

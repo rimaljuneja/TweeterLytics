@@ -1,12 +1,10 @@
 package actors;
 
 import models.Tweet;
-import models.TweetHashtagSearchResult;
-import models.TweetSearchResult;
+
 import models.UserTimelineResult;
 import play.libs.Json;
-import services.TweetService;
-import services.TwitterApi;
+
 import services.ProfileService;
 import utils.Util;
 
@@ -23,9 +21,9 @@ import akka.actor.Props;
 
 
 /**
- * Actor class for tweets searched by Users and their sentiment.
+ * Actor class for User timeline.
  * 
- * @author Azim Surani
+ * @author Rimal Juneja
  * @version 1.0.0
  */
 public class UserTimelineActor extends AbstractActor{
@@ -37,40 +35,35 @@ public class UserTimelineActor extends AbstractActor{
 	
 	private final ProfileService ProfileService;
 	
-	private final TwitterApi twitterApi;
 	
 	/**
 	 * Constructor to create instance of this actor.
 	 * @param webSocket
-	 * @param twitterApi
-	 * @param tweetService
-	 * @param wordMap
-	 * @author Azim Surani
+	 * @param ProfileService
+	 * @author Rimal Juneja
 	 */
-    public UserTimelineActor(final ActorRef webSocket,final TwitterApi twitterApi,final ProfileService ProfileService) {
+    public UserTimelineActor(final ActorRef webSocket, final ProfileService ProfileService) {
     	this.webSocket =  webSocket;
-    	this.twitterApi = twitterApi;
+    	
     	this.ProfileService = ProfileService;
     }
 
     /**
      * Factory method to create instance of User Search Actor
      * @param webSocket
-     * @param twitterApi
-     * @param tweetService
-     * @param wordMap
+     * @param ProfileService 
      * @return Props
-     * @author Azim Surani
-     * @param twitterApi 
+     * @author Rimal Juneja
+    
      */
-    public static Props props(final ActorRef webSocket,final TwitterApi twitterApi, final ProfileService ProfileService) {
-        return Props.create(UserTimelineActor.class,webSocket,twitterApi,ProfileService);
+    public static Props props(final ActorRef webSocket, final ProfileService ProfileService) {
+        return Props.create(UserTimelineActor.class,webSocket,ProfileService);
     }
     
     /**
      * It registers reference of current actor to TimeActor
      * 
-     * @author Azim Surani
+     * @author Rimal Juneja
      */
     @Override
     public void preStart() {
@@ -82,7 +75,7 @@ public class UserTimelineActor extends AbstractActor{
     /**
      * It de-registers reference of current actor from TimeActor
      * 
-     * @author Azim Surani
+     * @author Rimal Juneja
      */
     @Override
     public void postStop() {
@@ -94,7 +87,7 @@ public class UserTimelineActor extends AbstractActor{
 	/**
 	 * It reeceives messages and decides action based on message type.
 	 * 
-	 * @author Azim Surani
+	 * @author Rimal Juneja
 	 */
 	@Override
 	public Receive createReceive() {
@@ -109,12 +102,12 @@ public class UserTimelineActor extends AbstractActor{
 	/**
 	 * This method sends new search data when queried by user.
 	 * 
-	 * @param keyword
-	 * @author Azim Surani
+	 * @param userName
+	 * @author Rimal Juneja
 	 */
 	private void sendNewData(final String userName) {
 		
-		// Check if tweet is available in search hisory -- Acts like cache
+		// Check if username is available in search history -- Acts like cache
 		if(searchHistory.containsKey(userName)) {
 			
 			// Conversion of final TweetSearchResultObject object into JSON format
@@ -126,7 +119,7 @@ public class UserTimelineActor extends AbstractActor{
 			
 		else {
 			
-			//Get tweets via keyword passed
+			//Get userProfile via username 
 			ProfileService.getUserTimelineByID(userName)
 			.thenComposeAsync(tweets->	ProfileService.getTweetsByUserName(tweets,userName))
 				.thenAcceptAsync(response -> {
@@ -134,7 +127,7 @@ public class UserTimelineActor extends AbstractActor{
 					// Add data to search history
 					searchHistory.putIfAbsent(userName,  response);
 				
-					// Conversion of final TweetSearchResultObject object into JSON format
+					// Conversion of final UserTimelineResultObject object into JSON format
 					JsonNode jsonObject = Json.toJson(response);
 					
 					// Send requested data to user via websocket
@@ -146,16 +139,16 @@ public class UserTimelineActor extends AbstractActor{
 	}
 	
 	/**
-	 * This method send new tweets data if available to users via websocket.
+	 * This method send new tweets data of the user if available  via websocket.
 	 * 
-	 * @author 
+	 * @author Rimal Juneja
 	 */
 	private void sendUpdatedData() {
 		
 		searchHistory.keySet().parallelStream()
 		.forEach(userName -> {
 			
-			//Get tweets via keyword passed
+			//Get tweets of username passed
 			ProfileService.getUserTimelineByID(userName)
 			.thenAcceptAsync(tweets->
 {
@@ -188,7 +181,7 @@ public class UserTimelineActor extends AbstractActor{
 						// Flag to identify that new data was sent
 						response.setIsNewData(true);
 						
-						// Conversion of final TweetSearchResultObject object into JSON format
+						// Conversion of final UserTimelineResultObject object into JSON format
 						JsonNode jsonObject = Json.toJson(response);
 						
 						// Send new data to user
@@ -202,5 +195,7 @@ public class UserTimelineActor extends AbstractActor{
 		});
 			
 	}
+
+	
 
 }
